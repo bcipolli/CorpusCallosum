@@ -29,7 +29,7 @@ function r_dummy(sets, s)
     %
     net = r_massage_params(net);
     matfile = fullfile(net.sets.dirname, net.sets.matfile); %getfield(getfield(, 'sets'),'matfile'));
-    if exist(matfile, 'file')    
+    if exist(matfile, 'file')
         fprintf('Skipping %s\n', matfile);
         return;
     end; % don't re-run
@@ -42,6 +42,6 @@ function r_dummy(sets, s)
      [data.an]                = r_analyze(net, pats, data);
      %unix(['mv ' net.sets.matfile ' ./' net.sets.dirname]);
    catch err
-     fprintf(lasterr);
-     err.stack.file
+     fprintf('Error: %s\nCall stack:\n', err.message);
+     fprintf('\t%s\n', err.stack.file)
    end;

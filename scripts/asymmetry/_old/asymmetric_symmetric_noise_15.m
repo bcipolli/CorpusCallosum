@@ -1,4 +1,6 @@
 clear globals variables;
+addpath(genpath(fullfile('..', '..', '..', '..', 'lib')));
+addpath(genpath(fullfile('..', '..', '..', 'code')));
 
 net = common_args();
 
