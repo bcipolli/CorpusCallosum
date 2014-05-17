@@ -1,10 +1,17 @@
-function net = dissertation_args()
+function net = dissertation_args(tsteps, Idel, Idur, Sdel, Sdur)
+%function net = dissertation_args(tsteps, Idel, Idur, Sdel, Sdur)
+%
+% tsteps: # of time steps for simulation to run
+% Idel: delay (from start) to turn on input
+% Idur: duration (# time steps, after onset @ Idel) to keep input on
+% Sdel: delay (reverse, from end) to measure error
+% Sdur: duration (# time steps, reverse from Sdel) to measure the error.
 
-    tsteps = 30;
-    Idel = 1;
-    Idur = tsteps-Idel;
-    Sdel = 0; %start measuring output right when it goes off
-    Sdur = 1;  %measure for 5 time-steps
+    if ~exist('tsteps', 'var') || isempty(tsteps), tsteps = 30; end;
+    if ~exist('Idel', 'var')   || isempty(Idel),   Idel   = 1; end;
+    if ~exist('Idur', 'var')   || isempty(Idur),   Idur   = tsteps - Idel; end;
+    if ~exist('Sdel', 'var')   || isempty(Sdel),   Sdel   = 0; end;
+    if ~exist('Sdur', 'var')   || isempty(Sdur),   Sdur   = 1; end;
 
     net.sets.rseed = 289;
 
@@ -12,8 +19,8 @@ function net = dissertation_args()
     net.sets.niters          = 1000; %training iterations
     net.sets.online          = false;
     net.sets.ncc             = 3;
-    net.sets.cc_wt_lim       = inf*[-1 1];
-    net.sets.W_LIM           = inf*[-1 1];
+    net.sets.cc_wt_lim       = inf*[-1 1];  %% 2?
+    net.sets.W_LIM           = inf*[-1 1];  %% 2?
     net.sets.train_criterion = 0.5;
     net.sets.dataset         = 'lewis_elman';
     net.sets.init_type       = 'lewis_elman';
@@ -38,16 +45,16 @@ function net = dissertation_args()
     net.sets.eta_w           = 1E-3;    %learning rate (initial)
     net.sets.eta_w_min       = 0;
     net.sets.lambda_w        = 2E-2;    % lambda*E to control kappa.
-    net.sets.phi_w           = 0.25;      % multiplicative decrease to eta
-    net.sets.alpha_w         = 0.25;       %momentum
+    net.sets.phi_w           = 0.25;    % multiplicative decrease to eta
+    net.sets.alpha_w         = 0.25;    %% momentum
 
     net.sets.grad_pow        = 3;
 
     net.sets.nhidden_per      = 15;%
 
-    net.sets.axon_noise       = 2E-3;  % 2E-3 on delay=10 will give 1% average noise
+    net.sets.axon_noise       = 2*2E-3;  % 2E-3 on delay=10 will give 1% average noise
     net.sets.activity_dependent = true;  % if there is noise, make it activity-dependent
     net.sets.noise_init       = 0;
-    net.sets.noise_input      = 1E-6;  % Noisy input
+    net.sets.noise_input      = 0; %%1E-6;  % Noisy input
 
     net.sets.dirname          = fullfile(r_out_path('cache'), guru_fileparts(which(mfilename), 'dir'))  % output directory
