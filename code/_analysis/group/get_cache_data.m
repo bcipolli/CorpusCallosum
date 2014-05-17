@@ -55,7 +55,8 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
                 cur_found_dirs = remain_dirs(idx);
                 
             case 2  % Look inside the cache file
-                if isempty(cache_file), mi=mi+1; continue; end;
+                if isempty(cache_file), mi=mi+1; continue;
+                elseif ~exist(cache_file), mi=mi+1; continue; end;
                 if ~exist(cache_file,'file'), error('Couldn''t find cache file: %s', cache_file); end;
 
                 % Cache exists; either load it and merge.

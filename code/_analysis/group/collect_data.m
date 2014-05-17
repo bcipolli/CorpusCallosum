@@ -54,7 +54,7 @@ function [an,sets] = collect_data(dirname, resave)
               data.an = r_analyze(net, pats, data);
               net.continue=true;
               net.sets.axon_noise=0;
-              keyboard
+              
               [net,pats_new,data_new] = r_main(net);
               data    = r_test(net, pats, data);
               data.an = r_analyze(net, pats, data);
@@ -68,7 +68,7 @@ function [an,sets] = collect_data(dirname, resave)
 %fprintf('%d ', fi);
       blobs{end+1} = b;
   end;
-  keyboard
+  
   % Useful constants
   an.ts.niters = b.net.sets.niters;
   an.ts.lesion = [100:100:an.ts.niters];

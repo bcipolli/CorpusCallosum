@@ -60,20 +60,20 @@ if any(1<=plots & plots<2)
     % Intra
     lt_cdata = struct('mean', mean(cdata.intra.lei.cls,1), 'std', std(cdata.intra.lei.cls,[],1));
     lt_ndata = struct('mean', mean(ndata.intra.lei.cls,1), 'std', std(ndata.intra.lei.cls,[],1));
-    if ismember(1, plots) || ismember(1.5, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce'); end;
+    if ismember(1, plots) || ismember(1.5, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce'); title([get(get(gca,'Title'),'String') ' (intra)']);   end;
     
     lt_cdata = struct('mean', mean(cdata.intra.lei.err,1), 'std', std(cdata.intra.lei.err,[],1));
     lt_ndata = struct('mean', mean(ndata.intra.lei.err,1), 'std', std(ndata.intra.lei.err,[],1));
-    if ismember(1, plots) || ismember(1.6, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse'); end;
+    if ismember(1, plots) || ismember(1.6, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse'); title([get(get(gca,'Title'),'String') ' (intra)']);   end;
 
     % Inter
     lt_cdata = struct('mean', mean(cdata.inter.lei.cls,1), 'std', std(cdata.inter.lei.cls,[],1));
     lt_ndata = struct('mean', mean(ndata.inter.lei.cls,1), 'std', std(ndata.inter.lei.cls,[],1));
-    if ismember(1, plots) || ismember(1.7, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce'); end;
+    if ismember(1, plots) || ismember(1.7, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce'); title([get(get(gca,'Title'),'String') ' (inter)']);   end;
     
     lt_cdata = struct('mean', mean(cdata.inter.lei.err,1), 'std', std(cdata.inter.lei.err,[],1));
     lt_ndata = struct('mean', mean(ndata.inter.lei.err,1), 'std', std(ndata.inter.lei.err,[],1));
-    if ismember(1, plots) || ismember(1.8, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse'); end;
+    if ismember(1, plots) || ismember(1.8, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse'); title([get(get(gca,'Title'),'String') ' (inter)']);   end;
 
     clear('lt_cdata', 'lt_ndata');
 end;
@@ -93,7 +93,6 @@ end;
 
 %% Similarity matrix
 if any(3<=plots & plots<4)
-    keyboard
     if ismember(3, plots) || ismember(3.1, plots), fs(end+1) = plot_hu_sim(cdata.all,ndata.all); end;
     if ismember(3, plots) || ismember(3.2, plots), fs(end+1) = plot_hu_sim(cdata.intra,ndata.intra); end;
     if ismember(3, plots) || ismember(3.3, plots), fs(end+1) = plot_hu_sim(cdata.inter,ndata.inter); end;
