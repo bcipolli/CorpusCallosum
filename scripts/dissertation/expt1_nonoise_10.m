@@ -5,7 +5,7 @@ dbstop if error;
 
 tsteps = 30;
 Idel = 1;
-Idur = 6;%tsteps-Idel;
+Idur = 27;%tsteps-Idel;
 Sdel = 0; %start measuring output right when it goes off
 Sdur = 1;  %measure for 5 time-steps
 
@@ -57,6 +57,6 @@ net.sets.axon_noise       = 0E-4;%1E-5;%0.0005;
 net.sets.noise_init       = 0;%.001;%1;
 net.sets.noise_input      = 0;%1E-6;%.001;%001;%1;
 
-net.sets.dirname = fullfile(r_out_path('cache'), mfilename)
+net.sets.dirname = fullfile(r_out_path('cache'), guru_fileparts(mfilename, 'dir'), mfilename);
 
 r_looper(net, 25); % run 25 network instances
