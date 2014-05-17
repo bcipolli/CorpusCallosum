@@ -1,12 +1,12 @@
 addpath(genpath(fullfile(fileparts(which(mfilename)), '..', '..', 'code')));
 
-cogsci_dir = fullfile(r_out_path('cache'), 'expt1');
-cache_file = fullfile(cogsci_dir, 'expt1_cache.mat');
+expt1_dir = fullfile(r_out_path('cache'), 'dissertation');
+cache_file = fullfile(expt1_dir, 'expt1_cache.mat');
 
 %% Noise dependence: 10 time-steps
-for fi=expt1_figures(fullfile(cogsci_dir, 'nonoise_10'), fullfile(cogsci_dir, 'noise_10_2'), [0.3 0.4 0.5 0.6 0.7 0.8], cache_file)
-    figure(fi);
-    title('Learning Trajectory (delay=10 time-steps)');
+for fi=cogsci2013_figures(fullfile(expt1_dir, 'expt1_nonoise_10'), fullfile(expt1_dir, 'expt1_noise_10_2'), [0.3 0.4 0.5 0.6 0.7 0.8], cache_file)
+%    figure(fi);
+%    title('Learning Trajectory (delay=10 time-steps)');
 %    [~,~,oh] = legend();
 %    legend(oh, {'Intact (1 time-step)', 'Lesioned (1 time-step)', 'Intact (10 time-steps)', 'Lesioned (10 time-steps)'});
 end;
@@ -14,7 +14,7 @@ return
 
 
 %% Noise dependence: 2 time-steps
-for fi=expt1_figures(fullfile(cogsci_dir, 'nonoise_2'), fullfile(cogsci_dir, 'noise_2_1'), [0.4 0.8], cache_file)
+for fi=cogsci2013_figures(fullfile(expt1_dir, 'nonoise_2'), fullfile(expt1_dir, 'noise_2_1'), [0.4 0.8], cache_file)
     figure(fi);
     title('Learning Trajectory (delay=2 time-steps)');
 %    [~,~,oh] = legend();
@@ -24,7 +24,7 @@ end;
 %% Time dependence: control
 
 % % wrongly classified
-for fi=expt1_figures(fullfile(cogsci_dir, 'nonoise_2'), fullfile(cogsci_dir, 'nonoise_10'), [0.4 0.8], cache_file)
+for fi=cogsci2013_figures(fullfile(expt1_dir, 'expt1_nonoise_2'), fullfile(expt1_dir, 'expt1_nonoise_10'), [0.4 0.8], cache_file)
     figure(fi);
     [~,~,oh] = legend();
     title('Learning Trajectory (control)');
@@ -34,7 +34,7 @@ end;
 %% Time dependence: noise
 
 % % wrongly classified
-for fi=expt1_figures(fullfile(cogsci_dir, 'noise_2_1'), fullfile(cogsci_dir, 'noise_10_2'), [0.4 0.8], cache_file)
+for fi=cogsci2013_figures(fullfile(expt1_dir, 'expt1_noise_2_1'), fullfile(expt1_dir, 'expt1_noise_10_2'), [0.4 0.8], cache_file)
     figure(fi);
     title('Learning Trajectory (noise)');
     [~,~,oh] = legend();
