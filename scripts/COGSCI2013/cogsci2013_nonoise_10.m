@@ -9,10 +9,10 @@ Idur = 6;%tsteps-Idel;
 Sdel = 0; %start measuring output right when it goes off
 Sdur = 1;  %measure for 5 time-steps
 
-net.sets.rseed = 289;
+net.sets.rseed = 288;
 
 %training parameters
-net.sets.niters          = 2000; %training iterations
+net.sets.niters          = 1000; %training iterations
 net.sets.online          = false;
 net.sets.ncc             = 3;
 net.sets.cc_wt_lim       = inf*[-1 1];
@@ -50,16 +50,26 @@ net.sets.grad_pow        = 3;
 %net.sets.duplicate_output = false; % :( :( :(
 net.sets.nhidden_per      = 15;% 15;
 
-net.sets.axon_noise       = 2*1E-2*[linspace(1, 1,500) linspace(1,0.0,500) 0*linspace(0.1,0.0,1000) ]./net.sets.D_CC_INIT(1);%1E-5;%0.0005;
-%net.sets.activity_dependent = true;
-net.sets.iteration_dependent = true;
-
+net.sets.axon_noise       = 0E-4;%1E-5;%0.0005;
 net.sets.noise_init       = 0;%.001;%1;
 net.sets.noise_input      = 1E-6;%.001;%001;%1;
 
-net.sets.dirname = fullfile(guru_getOutPath('cache'), 'ringo', 'development', mfilename());
+dirname = r_out_path('runs', mfilename);
+sets= net.sets;
 
-r_looper(net, 25); % run 25 network instances
+if ~exist(dirname,'dir'), mkdir(dirname); end;
+for s=(288+[1:25])
+   % Make sure not to reuse networks!
+   clear 'net';
+   net.sets = sets;
 
+   net.sets.rseed = s;
+   try
+     [net,pats,data]          = r_main(net);
+     [data.an]                = r_analyze(net, pats, data);
+     unix(['mv ' net.sets.matfile ' ./' dirname]);
+   catch
+   end;
+end;
 
 
