@@ -5,8 +5,8 @@ dbstop if error;
 
 tsteps = 30;
 Idel = 1;
-Idur = 6;%tsteps-Idel;
-Sdel = 0; %start measuring output right when it goes off 
+Idur = tsteps-Idel;
+Sdel = 0; %start measuring output right when it goes off
 Sdur = 1;  %measure for 5 time-steps
 
 net.sets.rseed = 289;
@@ -17,14 +17,14 @@ net.sets.online          = false;
 net.sets.ncc             = 3;
 net.sets.cc_wt_lim       = inf*[-1 1];
 net.sets.W_LIM           = inf*[-1 1];
-net.sets.train_criterion = 0.5; 
+net.sets.train_criterion = 0.5;
 net.sets.dataset         = 'lewis_elman';
 net.sets.init_type       = 'lewis_elman';
 net.sets.train_mode      = 'resilient';
 
 %timing parameters
 net.sets.dt     = 0.01;
-net.sets.T_INIT = 5*net.sets.dt.*[1 1];  %change     
+net.sets.T_INIT = 5*net.sets.dt.*[1 1];  %change
 net.sets.T_LIM  = net.sets.T_INIT;
 net.sets.tstart = 0;
 net.sets.tsteps = tsteps  ;%we'll add another hidden layer, so measure output at one step later
@@ -40,7 +40,7 @@ net.sets.D_CC_INIT(2,:,:) = net.sets.D_CC_INIT(1,:,:); %late;  l->r and r->l
 
 net.sets.eta_w           = 1E-3;    %learning rate (initial)
 net.sets.eta_w_min       = 0;
-net.sets.lambda_w        = 2E-2;    % lambda*E to control kappa. 
+net.sets.lambda_w        = 2E-2;    % lambda*E to control kappa.
 net.sets.phi_w           = 0.25;      % multiplicative decrease to eta
 net.sets.alpha_w         = 0.25;       %momentum
 

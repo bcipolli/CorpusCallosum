@@ -5,7 +5,7 @@ dbstop if error;
 
 tsteps = 30;
 Idel = 1;
-Idur = 27;%tsteps-Idel;
+Idur = tsteps-Idel;
 Sdel = 0; %start measuring output right when it goes off
 Sdur = 1;  %measure for 5 time-steps
 
