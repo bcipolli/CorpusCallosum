@@ -28,7 +28,7 @@ function r_dummy(sets, s)
 
     %
     net = r_massage_params(net);
-    matfile = fullfile(net.sets.dirname, net.sets.matfile); %getfield(getfield(, 'sets'),'matfile'));
+    matfile = fullfile(net.sets.dirname, net.sets.matfile);
     if exist(matfile, 'file')
         fprintf('Skipping %s\n', matfile);
         return;
