@@ -6,12 +6,12 @@ function [net,pats,data,f,sets] = r_main(net,pats,data)
     rand('seed',net.sets.rseed);
 
     % Create patterns for the given training paradigm
-    if (~exist('pats','var'))
+    if (~exist('pats', 'var'))
         pats = r_pats(net);
     end;
-    
+
     % If the network doesn't exist, then start net from scratch
-    if (~isfield(net,'w'))
+    if (~isfield(net, 'w'))
         [net] = net.fn.init(net, pats);
     end;
 
@@ -28,8 +28,10 @@ function [net,pats,data,f,sets] = r_main(net,pats,data)
     % analyze
     [data]     = r_test(net,pats,data); %regular test
 %    [data.an]  = r_analyze(net, pats, data);
-    
+
     % Save result
     if ~exist(net.sets.dirname), mkdir(net.sets.dirname); end;
-    save(fullfile(net.sets.dirname, net.sets.matfile),'net','pats','data');
-    
+    outfile = fullfile(net.sets.dirname, net.sets.matfile);
+    fprintf('Saving to %s', outfile);
+    save(outfile,'net','pats','data');
+
