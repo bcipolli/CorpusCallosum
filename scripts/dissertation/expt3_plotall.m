@@ -1,19 +1,14 @@
+clear all global
 addpath(genpath(fullfile(fileparts(which(mfilename)), '..', '..', 'code')));
 
-cogsci_dir = fullfile(r_out_path('cache'), 'development');
-cache_file = fullfile(cogsci_dir, 'development_cache.mat');
+expt3_dir = fullfile(r_out_path('cache'), 'dissertation');
+cache_file = fullfile(expt3_dir, 'expt3_cache.mat');
 
 %% Noise dependence: 10 time-steps
-for fi=cogsci2013_figures(fullfile(cogsci_dir, 'nonoise_test_2000'), fullfile(cogsci_dir, 'noise_test_2000'), [0.4 1.2 2.2 3], cache_file)
-    %figure(fi);
-    %title('Learning Trajectory (delay=10 time-steps)');
-%    [~,~,oh] = legend();
-%    legend(oh, {'Intact (1 time-step)', 'Lesioned (1 time-step)', 'Intact (10 time-steps)', 'Lesioned (10 time-steps)'});
-end;
-return
-
+cogsci2013_figures(fullfile(expt3_dir, 'expt3_nonoise_10'), fullfile(expt3_dir, 'expt3_noise_10_2'), [0.4 0.6 0.8 1.4 1.6 1.8 2.2], cache_file);
+%cogsci2013_figures(fullfile(expt3_dir, 'expt3_nonoise_10_5000'), fullfile(expt3_dir, 'expt3_noise_10_2_5000'), [0.4 0.6 0.8 1.4 1.6 1.8 2.2], cache_file);
 
 % Save off the cache file, for future fast access
-if ~exist(cache_file, 'file')
-    save_cache_data(cache_file);
-end;
+%if ~exist(cache_file, 'file')
+%    save_cache_data(cache_file);
+%end;

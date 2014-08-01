@@ -49,31 +49,35 @@ end;
 %% Learning trajectory (diff)
 if any(1<=plots & plots<2)
     % All
-    lt_cdata = struct('mean', cdata.all.lei.clsmean, 'std', cdata.all.lei.clsstd);
-    lt_ndata = struct('mean', ndata.all.lei.clsmean, 'std', ndata.all.lei.clsstd);
+    lt_cdata = struct('mean', cdata.all.lei.clsmean, 'std', cdata.all.lei.clsstd, 'sem', cdata.all.lei.clssem);
+    lt_ndata = struct('mean', ndata.all.lei.clsmean, 'std', ndata.all.lei.clsstd, 'sem', ndata.all.lei.clssem);
     if ismember(1, plots) || ismember(1.3, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce'); end;
     
-    lt_cdata = struct('mean', cdata.all.lei.errmean, 'std', cdata.all.lei.errstd);
-    lt_ndata = struct('mean', ndata.all.lei.errmean, 'std', ndata.all.lei.errstd);
+    lt_cdata = struct('mean', cdata.all.lei.errmean, 'std', cdata.all.lei.errstd, 'sem', cdata.all.lei.errsem);
+    lt_ndata = struct('mean', ndata.all.lei.errmean, 'std', ndata.all.lei.errstd, 'sem', ndata.all.lei.errsem);
     if ismember(1, plots) || ismember(1.4, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse'); end;
 
     % Intra
-    lt_cdata = struct('mean', mean(cdata.intra.lei.cls,1), 'std', std(cdata.intra.lei.cls,[],1));
-    lt_ndata = struct('mean', mean(ndata.intra.lei.cls,1), 'std', std(ndata.intra.lei.cls,[],1));
-    if ismember(1, plots) || ismember(1.5, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce'); title([get(get(gca,'Title'),'String') ' (intra)']);   end;
+    [h, p] = ttest2(cdata.intra.lei.cls, ndata.intra.lei.cls);
+    lt_cdata = struct('mean', mean(cdata.intra.lei.cls,1), 'std', std(cdata.intra.lei.cls,[],1), 'sem', guru_sem(cdata.intra.lei.cls, 1));
+    lt_ndata = struct('mean', mean(ndata.intra.lei.cls,1), 'std', std(ndata.intra.lei.cls,[],1), 'sem', guru_sem(ndata.intra.lei.cls, 1));
+    if ismember(1, plots) || ismember(1.5, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce',h,p); title([get(get(gca,'Title'),'String') ' (intra)']);   end;
     
-    lt_cdata = struct('mean', mean(cdata.intra.lei.err,1), 'std', std(cdata.intra.lei.err,[],1));
-    lt_ndata = struct('mean', mean(ndata.intra.lei.err,1), 'std', std(ndata.intra.lei.err,[],1));
-    if ismember(1, plots) || ismember(1.6, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse'); title([get(get(gca,'Title'),'String') ' (intra)']);   end;
+    [h, p] = ttest2(cdata.intra.lei.err, ndata.intra.lei.err);
+    lt_cdata = struct('mean', mean(cdata.intra.lei.err,1), 'std', std(cdata.intra.lei.err,[],1), 'sem', guru_sem(cdata.intra.lei.err, 1));
+    lt_ndata = struct('mean', mean(ndata.intra.lei.err,1), 'std', std(ndata.intra.lei.err,[],1), 'sem', guru_sem(ndata.intra.lei.err, 1));
+    if ismember(1, plots) || ismember(1.6, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse',h,p); title([get(get(gca,'Title'),'String') ' (intra)']);   end;
 
     % Inter
-    lt_cdata = struct('mean', mean(cdata.inter.lei.cls,1), 'std', std(cdata.inter.lei.cls,[],1));
-    lt_ndata = struct('mean', mean(ndata.inter.lei.cls,1), 'std', std(ndata.inter.lei.cls,[],1));
-    if ismember(1, plots) || ismember(1.7, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce'); title([get(get(gca,'Title'),'String') ' (inter)']);   end;
+    [h, p] = ttest2(cdata.inter.lei.cls, ndata.inter.lei.cls);
+    lt_cdata = struct('mean', mean(cdata.inter.lei.cls,1), 'std', std(cdata.inter.lei.cls,[],1), 'sem', guru_sem(cdata.inter.lei.cls, 1));
+    lt_ndata = struct('mean', mean(ndata.inter.lei.cls,1), 'std', std(ndata.inter.lei.cls,[],1), 'sem', guru_sem(ndata.inter.lei.cls, 1));
+    if ismember(1, plots) || ismember(1.7, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'bce',h,p); title([get(get(gca,'Title'),'String') ' (inter)']);   end;
     
-    lt_cdata = struct('mean', mean(cdata.inter.lei.err,1), 'std', std(cdata.inter.lei.err,[],1));
-    lt_ndata = struct('mean', mean(ndata.inter.lei.err,1), 'std', std(ndata.inter.lei.err,[],1));
-    if ismember(1, plots) || ismember(1.8, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse'); title([get(get(gca,'Title'),'String') ' (inter)']);   end;
+    [h, p] = ttest2(cdata.inter.lei.err, ndata.inter.lei.err);
+    lt_cdata = struct('mean', mean(cdata.inter.lei.err,1), 'std', std(cdata.inter.lei.err,[],1), 'sem', guru_sem(cdata.inter.lei.err, 1));
+    lt_ndata = struct('mean', mean(ndata.inter.lei.err,1), 'std', std(ndata.inter.lei.err,[],1), 'sem', guru_sem(ndata.inter.lei.err, 1));
+    if ismember(1, plots) || ismember(1.8, plots), fs(end+1) = plot_raw_lei(lt_cdata,lt_ndata,ts,'sse',h,p); title([get(get(gca,'Title'),'String') ' (inter)']);   end;
 
     clear('lt_cdata', 'lt_ndata');
 end;
@@ -81,21 +85,23 @@ end;
 
 %% Raw plot of lesion induced errors
 if any(2<=plots & plots<3)
+    %[h,p] = ttest2(cdata.intra.lei.cls - ndata.intra.lei.cls, cdata.inter.lei.cls - ndata.inter.lei.cls);
     lei_cdata = struct('intra', cdata.intra.lei.cls, 'inter', cdata.inter.lei.cls);
     lei_ndata = struct('intra', ndata.intra.lei.cls, 'inter', ndata.inter.lei.cls);
     if ismember(2, plots) || ismember(2.1, plots), fs(end+1) = plot_lei_split(lei_cdata,lei_ndata,ts,'bce'); end;
     
+    %[h,p] = ttest2(cdata.intra.lei.err - ndata.intra.lei.err, cdata.inter.lei.err - ndata.inter.lei.err);
     lei_cdata = struct('intra', cdata.intra.lei.err, 'inter', cdata.inter.lei.err);
     lei_ndata = struct('intra', ndata.intra.lei.err, 'inter', ndata.inter.lei.err);
     if ismember(2, plots) || ismember(2.2, plots), fs(end+1) = plot_lei_split(lei_cdata,lei_ndata,ts,'sse'); end;
 end;
-    
+
 
 %% Similarity matrix
 if any(3<=plots & plots<4)
-    if ismember(3, plots) || ismember(3.1, plots), fs(end+1) = plot_hu_sim(cdata.all,ndata.all); end;
-    if ismember(3, plots) || ismember(3.2, plots), fs(end+1) = plot_hu_sim(cdata.intra,ndata.intra); end;
-    if ismember(3, plots) || ismember(3.3, plots), fs(end+1) = plot_hu_sim(cdata.inter,ndata.inter); end;
+    if ismember(3, plots) || ismember(3.1, plots), fs(end+1) = plot_hu_sim2(cdata.all,ndata.all, 'all'); end;
+    if ismember(3, plots) || ismember(3.2, plots), fs(end+1) = plot_hu_sim2(cdata.intra,ndata.intra, 'intra'); end;
+    if ismember(3, plots) || ismember(3.3, plots), fs(end+1) = plot_hu_sim2(cdata.inter,ndata.inter, 'inter'); end;
 end;
 
 
@@ -133,8 +139,74 @@ function f = plot_hu_sim(cdata, ndata)
     title('(noise) LH Similarity (lesion)');
 
     
+function f = plot_hu_sim2(cdata, ndata, lbl)
+%
+% Compare RH and LH similarity for noise and no-noise conditions.
+    nmodels_nonoise = size(cdata.intact.rh_sim, 1);
+    nmodels_noise = size(ndata.intact.rh_sim, 1);
     
-function f = plot_lei_split(cdata,ndata,ts,dtype)
+    sims_nonoise_intact = zeros(nmodels_nonoise, 1);
+    sims_noise_intact   = zeros(nmodels_noise, 1);
+    sims_nonoise_lesion = zeros(nmodels_nonoise, 1);
+    sims_noise_lesion   = zeros(nmodels_noise, 1);
+    
+    for mi=1:nmodels_nonoise
+        if isempty(cdata.intact.rh_sim(mi,:)) || isempty(cdata.intact.lh_sim(mi,:))
+            continue;
+        end;
+        sims_nonoise_intact(mi) = corr(cdata.intact.rh_sim(mi,:)', cdata.intact.lh_sim(mi,:)');
+        sims_nonoise_lesion(mi) = corr(cdata.lesion.rh_sim(mi,:)', cdata.lesion.lh_sim(mi,:)');
+    end;
+    
+    for mi=1:nmodels_noise
+        if isempty(ndata.intact.rh_sim(mi,:)) || isempty(ndata.intact.lh_sim(mi,:))
+            continue;
+        end;
+        sims_noise_intact(mi) = corr(ndata.intact.rh_sim(mi,:)', ndata.intact.lh_sim(mi,:)');
+        sims_noise_lesion(mi) = corr(ndata.lesion.rh_sim(mi,:)', ndata.lesion.lh_sim(mi,:)');
+    end;
+    
+    fprintf('[%s]: RH / LH no-noise similarity (intact): %.2f +/- %.2f\n', lbl, mean(sims_nonoise_intact), std(sims_nonoise_intact));
+    fprintf('[%s]: RH / LH   noise similarity: (intact): %.2f +/- %.2f\n', lbl, mean(sims_noise_intact),   std(sims_noise_intact));
+    fprintf('[%s]: RH / LH no-noise similarity (lesion): %.2f +/- %.2f\n', lbl, mean(sims_nonoise_lesion), std(sims_nonoise_lesion));
+    fprintf('[%s]: RH / LH   noise similarity: (lesion): %.2f +/- %.2f\n', lbl, mean(sims_noise_lesion),   std(sims_noise_lesion));
+    
+    f = figure;
+    
+    %keyboard
+    
+%     keyboard
+%     
+%     f = figure;
+%     
+%     subplot(2,2,1);
+%     imagesc(corr(cdata.intact.rh_sim', cdata.intact.lh_sim'), [-1 1]);
+%     dp = dot(cdata.intact.rh_sim(:), cdata.intact.lh_sim(:));
+%     set(gca, 'xtick',[],'ytick',[]);
+%     title(sprintf('RH / LH no-noise similarity (dot-prod = %.2f)', dp));
+% 
+%     subplot(2,2,2);
+%     imagesc(corr(cdata.lesion.rh_sim', cdata.lesion.lh_sim), [-1 1]);
+%     dp = dot(cdata.lesion.rh_sim(:), cdata.lesion.lh_sim(:));
+%     set(gca, 'xtick',[],'ytick',[]);
+%     title(sprintf('RH / LH no-noise lesion similarity (dot-prod = %.2f)', dp));
+% 
+%     subplot(2,2,3);
+%     imagesc(corr(ndata.intact.rh_sim, ndata.intact.lh_sim), [-1 1]);
+%     dp = dot(ndata.intact.rh_sim(:), ndata.intact.lh_sim(:));
+%     set(gca, 'xtick',[],'ytick',[]);
+%     title(sprintf('RH / LH noise similarity (dot-prod = %.2f)', dp));
+% 
+%     
+%     subplot(2,2,4);
+%     imagesc(corr(ndata.lesion.rh_sim, ndata.lesion.lh_sim), [-1 1]);
+%     dp = dot(ndata.lesion.rh_sim(:), ndata.lesion.lh_sim(:));
+%     set(gca, 'xtick',[],'ytick',[]);
+%     title(sprintf('RH / LH noise lesion similarity (dot-prod = %.2f)', dp));
+
+    
+    
+function f = plot_lei_split(cdata,ndata,ts,dtype,h,p)
 %
 
     f = figure;
@@ -147,18 +219,19 @@ function f = plot_lei_split(cdata,ndata,ts,dtype)
     erm = ddlbls.markers{2}; %inter-hemispheric
 
     subplot(1,2,1);
-    hold on;
     set(gca, 'FontSize', 18);
     title('a) Lesion-induced error');
     xlabel('training epoch'); ylabel(['\Delta ' ddlbls.ylbl]);
+    hold on;
+
     lh1=plot(ts.lesion,      mean(cdata.intra,1), [cc ram '-.'], 'LineWidth', 3, 'MarkerFaceColor', cc, 'MarkerSize', 10);
     lh2=plot(ts.lesion,      mean(ndata.intra,1), [nc ram '-.'], 'LineWidth', 3, 'MarkerFaceColor', nc, 'MarkerSize', 10);
     lh3=plot(ts.lesion,      mean(cdata.inter,1), [cc erm '-.'], 'LineWidth', 3, 'MarkerFaceColor', cc, 'MarkerSize', 10);
     lh4=plot(ts.lesion,      mean(ndata.inter,1), [nc erm '-.'], 'LineWidth', 3, 'MarkerFaceColor', nc, 'MarkerSize', 10);
-    errorbar(ts.lesion,  mean(cdata.intra,1), std(cdata.intra,[],1), [cc '.']);
-    errorbar(ts.lesion,  mean(ndata.intra,1), std(ndata.intra,[],1), [nc '.']);
-    errorbar(ts.lesion,  mean(cdata.inter,1), std(cdata.inter,[],1), [cc '.']);
-    errorbar(ts.lesion,  mean(ndata.inter,1), std(ndata.inter,[],1), [nc '.']);
+    errorbar(ts.lesion,  mean(cdata.intra,1), guru_sem(cdata.intra, 1), [cc '.']);
+    errorbar(ts.lesion,  mean(ndata.intra,1), guru_sem(cdata.intra, 1), [nc '.']);
+    errorbar(ts.lesion,  mean(cdata.inter,1), guru_sem(cdata.intra, 1), [cc '.']);
+    errorbar(ts.lesion,  mean(ndata.inter,1), guru_sem(cdata.intra, 1), [nc '.']);
     legend([lh1 lh2 lh3 lh4], {'Intra- (control)', 'Intra- (noise)', 'Inter- (control)', 'Inter- (noise)'}, 'FontSize', 16, 'Location', 'NorthWest')
     set(gca, 'LooseInset', [0.15 0.2 0.15 0.15]); %[left top right bottom]
     set(gca, 'xlim', [-10 ts.niters+25], 'ylim', ddlbls.ytick([1 end-1]));
@@ -167,34 +240,47 @@ function f = plot_lei_split(cdata,ndata,ts,dtype)
 
     intra_dd_mean = mean(cdata.intra,1) - mean(ndata.intra,1);
     inter_dd_mean = mean(cdata.inter,1) - mean(ndata.inter,1);
-    intra_dd_std  = std(cdata.intra,[],1) + std(ndata.intra,[],1);
-    inter_dd_std  = std(cdata.inter,[],1) + std(ndata.inter,[],1);
+    intra_dd_sem  = guru_sem(cdata.intra, 1) + guru_sem(ndata.intra, 1);
+    inter_dd_sem  = guru_sem(cdata.inter, 1) + guru_sem(ndata.inter, 1);
     
     subplot(1,2,2);
-    hold on;
     set(gca, 'FontSize', 18);
     title('b) \Delta Lesion-induced error');
     xlabel('training epoch'); ylabel(['\Delta \Delta ' ddlbls.ylbl]);
+    hold on;
+
     lh1=plot(ts.lesion, intra_dd_mean, [ram 'k-.'], 'LineWidth', 2, 'MarkerFaceColor', 'k', 'MarkerSize', 10);
     lh2=plot(ts.lesion, inter_dd_mean, [erm 'k-.'], 'LineWidth', 2, 'MarkerFaceColor', 'k', 'MarkerSize', 10);
-    errorbar(ts.lesion, intra_dd_mean, intra_dd_std, 'k.');
-    errorbar(ts.lesion, inter_dd_mean, inter_dd_std, 'k.');
-    legend([lh1 lh2], {'Intrahemispheric patterns', 'Interhemispheric patterns', }, 'FontSize', 16);
+    errorbar(ts.lesion, intra_dd_mean, intra_dd_sem, 'k.');
+    errorbar(ts.lesion, inter_dd_mean, inter_dd_sem, 'k.');
+    legend([lh1 lh2], {'Intrahemispheric patterns', 'Interhemispheric patterns', }, 'FontSize', 16, 'Location', 'NorthWest');
     set(gca, 'LooseInset', [0.15 0.2 0.15 0.15]); %[left top right bottom]
     set(gca, 'xlim', [-10 ts.niters+25], 'ylim', ddlbls.ytick(floor(end/2)).*[-1 1]);
 %    set(gca, 'ytick', ddlbls.ytick().*[-1 1], 'yticklabel', {['-' ddlbls.yticklabel{floor(end/2)}] ddlbls.yticklabel{floor(end/2)}});
+    set(gca, 'ylim', [-0.1, 0.3]);
     axis square;
 
-
-    drawnow;
+    if exist('stats','var') && exist('p','var')
+        p
+        %for ti=1:length(ts.lesion)
+        %    if stats(ti)
+        %        nstars = min(3, floor(-log10(p(ti))));
+        %        stars = repmat('*', [1 nstars]);
+        %        xval = ts.lesion(ti);
+        %        yval = max([intra_dd_mean(ti), inter_dd_mean(ti)]);
+        %    
+        %        text(xval - 18*length(stars)/2, yval + 0.05, stars, 'FontSize', 18, 'FontWeight', 'bold');
+        %    end;
+        %end;
+    end;    
     set(gcf, 'Position', [10          90        1266         594]);
+    drawnow;
 
 
 % Dependence across delays
 
-
 %% Raw plot of lesion induced errors
-function f = plot_raw_lei(cdata,ndata,ts,dtype)
+function f = plot_raw_lei(cdata,ndata,ts,dtype,stats,p)
 %
     f = figure;
     ddlbls = datatype_dependent_labels(dtype);
@@ -204,12 +290,27 @@ function f = plot_raw_lei(cdata,ndata,ts,dtype)
     nc = ddlbls.colors{2};
     hold on;
     set(gca, 'FontSize', 18);
-    title('Lesion-induced error (Error_{lesion}-Error_{intact})');
+    title('Lesion-induced error');
     xlabel('training epoch'); ylabel(ddlbls.ylbl);
     plot(ts.lesion,      cdata.mean, [cc '.-'], 'LineWidth', 3, 'MarkerFaceColor', cc, 'MarkerSize', 10);
     plot(ts.lesion,      ndata.mean, [nc '.-'], 'LineWidth', 3, 'MarkerFaceColor', nc, 'MarkerSize', 10);
-    errorbar(ts.lesion,  cdata.mean, cdata.std/2, [cc '.']);
-    errorbar(ts.lesion,  ndata.mean, ndata.std/2, [nc '.']);
+    errorbar(ts.lesion,  cdata.mean, cdata.sem, [cc '.']);
+    errorbar(ts.lesion,  ndata.mean, ndata.sem, [nc '.']);
+ 
+    if exist('stats','var') && exist('p','var')
+        p
+        %for ti=1:length(ts.lesion)
+        %    if stats(ti)
+        %        nstars = min(3, floor(-log10(p(ti))));
+        %        stars = repmat('*', [1 nstars]);
+        %        xval = ts.lesion(ti);
+        %        yval = max([cdata.mean(ti), ndata.mean(ti)]);
+        %    
+        %        text(xval - 18*length(stars)/2, yval + 0.05, stars, 'FontSize', 18, 'FontWeight', 'bold');
+        %    end;
+        %end;
+    end;
+    
     legend({'Control', 'Noise'}, 'FontSize', 16, 'Location', 'NorthWest')
     set(gca, 'LooseInset', [0.15 0.2 0.15 0.15]); %[left top right bottom]
     set(gca, 'xlim', [-10 ts.niters+25], 'ylim', ddlbls.ytick([1 end-1]));
@@ -218,8 +319,8 @@ function f = plot_raw_lei(cdata,ndata,ts,dtype)
     %set(gca, 'ytick', [0.0:0.1:0.6], 'yticklabel', {'0%' '10%' '20%' '30%' '40%' '50%' '60%'});
     axis square;
     
-    drawnow;
     set(gcf, 'Position', [   220    46   727   638]);
+    drawnow;
 
 
 %% Raw plot of learning trajectories, without separation into inter/intra
@@ -239,8 +340,8 @@ function f = plot_raw_learning(cdata,ndata,ts,dtype,overlay)
     xlabel('training epoch'); ylabel(ddlbls.ylbl);
     lh1 = plot(ts.intact,      mean(cdata.intact(:,ts.intact),1), [cc '.-'], 'LineWidth', 3, 'MarkerFaceColor', cc, 'MarkerSize', 10);
     lh2 = plot(ts.lesion,      mean(cdata.lesion,1),              [cc '.:'], 'LineWidth', 3, 'MarkerFaceColor', cc, 'MarkerSize', 10);
-    errorbar(ts.intact,  mean(cdata.intact(:,ts.intact),1), std(cdata.intact(:,ts.intact),[],1)/2, [cc '.']);
-    errorbar(ts.lesion,  mean(cdata.lesion,1),              std(cdata.lesion,[],1)/2, [cc '.'])
+    errorbar(ts.intact,  mean(cdata.intact(:,ts.intact),1), guru_sem(cdata.intact(:,ts.intact), 1), [cc '.']);
+    errorbar(ts.lesion,  mean(cdata.lesion,1),              guru_sem(cdata.lesion, 1), [cc '.'])
     if ~overlay
         set(gca, 'LooseInset', [0.15 0.2 0.15 0.15]); %[left top right bottom]
         set(gca, 'xlim', [-10 ts.niters+25], 'ylim', ddlbls.ylim);
@@ -259,8 +360,8 @@ function f = plot_raw_learning(cdata,ndata,ts,dtype,overlay)
     xlabel('training epoch'); ylabel(ddlbls.ylbl);
     lh3 = plot(ts.intact,      mean(ndata.intact(:,ts.intact),1), [nc '.-'], 'LineWidth', 3, 'MarkerFaceColor', nc, 'MarkerSize', 10);
     lh4 = plot(ts.lesion,      mean(ndata.lesion,1),              [nc '.:'], 'LineWidth', 3, 'MarkerFaceColor', nc, 'MarkerSize', 10);
-    errorbar(ts.intact,  mean(ndata.intact(:,ts.intact),1), std(ndata.intact(:,ts.intact),[],1)/2, [nc '.']);
-    errorbar(ts.lesion,  mean(ndata.lesion,1),              std(ndata.lesion,[],1)/2, [nc '.'])
+    errorbar(ts.intact,  mean(ndata.intact(:,ts.intact),1), guru_sem(ndata.intact(:,ts.intact), 1), [nc '.']);
+    errorbar(ts.lesion,  mean(ndata.lesion,1),              guru_sem(ndata.lesion, 1), [nc '.'])
     set(gca, 'LooseInset', [0.15 0.2 0.15 0.15]); %[left top right bottom]
     set(gca, 'xlim', [-10 ts.niters+25], 'ylim', ddlbls.ylim);
     set(gca, 'ytick', ddlbls.ytick, 'yticklabel', ddlbls.yticklabel);
@@ -270,15 +371,15 @@ function f = plot_raw_learning(cdata,ndata,ts,dtype,overlay)
         title('Learning Trajectory');
         legend([lh1 lh2 lh3 lh4], {'Intact (control)', 'Lesioned (control)', 'Intact (noise)', 'Lesioned (noise)'}, 'FontSize', 18);
         
-        drawnow;
         set(gcf, 'Position', [   220    46   727   638]);
-
+        drawnow;
+ 
     else
         title('b) Learning Trajectory (noise)');
         legend({'Intact', 'Lesioned' }, 'FontSize', 18);
 
-        drawnow; 
         set(gcf, 'Position', [10          90        1266         594]);
+        drawnow; 
     end;
 
 

@@ -1,8 +1,7 @@
 clear globals variables;
 matlabpool open 4
 if ~exist('r_looper','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
-
-chunk_size = guru_iff(exist('matlabpool','file'), max(1,matlabpool('size')), 1);
+if ~exist('matlabpool','file'), chunk_size = 1; else chunk_size = max(1,matlabpool('size')); end;
 
 parfor rseed=(289-1+[1:25])%chunk_size:25])
 for axon_noise = [0 NaN]  % NaN means set to existing level

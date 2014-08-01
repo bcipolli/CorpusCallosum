@@ -1,4 +1,4 @@
-function [d,s,folders] = collect_data_looped(dirname, cache_file, prefix)
+function [d,s,folders] = collect_data_looped(dirname, cache_file, prefix, force_load)
 %
 % d: data
 % s: settings
@@ -6,14 +6,15 @@ function [d,s,folders] = collect_data_looped(dirname, cache_file, prefix)
 
 if ~exist('dirname','var'),    dirname    = 'runs'; end;
 if ~exist('cache_file','var'), cache_file = ''; end; % no caching
-if ~exist('prefix','var'),     prefix='tdlc'; end;
+if ~exist('prefix','var'),     prefix=''; end;
+if ~exist('force', 'var'),     force_load = true; end;
 
 % Get all subfolders with given prefix
 if isempty(dirname)
     paths = load_cache_file(cache_file);
     folders = cellfun(@(d) guru_fileparts(d,'name'), paths, 'UniformOutput', false);
 else
-    folders = dir(fullfile(dirname,[prefix '*']));
+    folders = dir(fullfile(dirname, [prefix '*']));
     folders = folders([folders.isdir]);
     folders = setdiff({folders.name}, {'.','..'});
 end;
@@ -25,7 +26,7 @@ for foi=1:length(folders)
     % Get the data 
     curdir = fullfile(dirname, folders{foi});
     fprintf('Processing [%s]...', curdir);
-    [d{foi},~,s{foi}] = get_cache_data(curdir, cache_file); % break the caching
+    [d{foi},~,s{foi}] = get_cache_data(curdir, cache_file, force_load); % break the caching
 %    d{foi} = d{foi}{1}; % strip off extra cell layer
 %    s{foi} = s{foi}{1};
     

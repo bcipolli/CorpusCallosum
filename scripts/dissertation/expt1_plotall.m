@@ -1,10 +1,12 @@
 addpath(genpath(fullfile(fileparts(which(mfilename)), '..', '..', 'code')));
 
 expt1_dir = fullfile(r_out_path('cache'), 'dissertation');
-cache_file = fullfile(expt1_dir, 'expt1_cache.mat');
+cache_file = fullfile(expt1_dir, 'expt1_cache.mat')
+
+
 
 %% Noise dependence: 10 time-steps
-for fi=cogsci2013_figures(fullfile(expt1_dir, 'expt1_nonoise_10'), fullfile(expt1_dir, 'expt1_noise_10_2'), [0.3 0.4 0.5 0.6 0.7 0.8], cache_file)
+for fi=cogsci2013_figures(fullfile(expt1_dir, 'expt1_nonoise_10'), fullfile(expt1_dir, 'expt1_noise_10_1'), [0.4 0.6 0.8 1.4 1.6 1.8 2.2], cache_file)
 %    figure(fi);
 %    title('Learning Trajectory (delay=10 time-steps)');
 %    [~,~,oh] = legend();
