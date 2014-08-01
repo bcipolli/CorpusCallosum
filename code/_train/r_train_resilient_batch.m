@@ -121,29 +121,25 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
             if ~any(net.sets.axon_noise)
                 x(ti,:,:)   = sum(w_repd .* y_d, 2);
             else
-                if length(net.sets.axon_noise) > 1
-                  % Noise is pre-specified on a per-iteration level.
-                  axon_noise = net.sets.axon_noise(iter);
-                  if axon_noise
-                    axon_noise=(D_repd>1) .* D_repd .* (axon_noise) .* 2.*(rand(size(D_repd))-0.5);
-                  end;
-                else  % delay-dependent noise (but no noise on local connections
-                  axon_noise  = (D_repd>1) .* D_repd .* (net.sets.axon_noise) .* 2.*(rand(size(D_repd))-0.5); % [-1 1] local has no noise, version % should be activity-dependent
-                  if isfield(net.sets,'activity_dependent') && net.sets.activity_dependent
+                axon_noise_coeff = net.sets.axon_noise(guru_iff(length(net.sets.axon_noise) == 1, 1, iter));
+                noise_distn = 0.12 * randn(size(D_repd));  % tweak std to empirically produce 1% noise with axon_noise_coeff=0.9
+                axon_noise = (D_repd>1) .* axon_noise_coeff .* D_repd.* noise_distn;
+                if guru_getfield(net.sets, 'activity_dependent', false)
                     % Noise is dependent on the average activation of a unit
                     axon_noise = axon_noise .* repmat(squeeze(y(ti,:,:)), [1 1 size(net.w,2)]);
-                  end;
                 end;
 
                 if iter==25 && ti==10  % Report on the noise level
-                    cc_act = y(ti,:,net.idx.cc);
-                    avg_cc_act = sum(abs(cc_act(:))) / nnz(cc_act); %sum(sum(abs(y(ti,:,net.idx.cc)),3),2) / nnz(;
+                    cc_act = squeeze(y(ti,:,net.idx.cc));
+                    avg_cc_act = sum(abs(cc_act(:))) / nnz(cc_act);
+                    std_cc_act = mean(std(cc_act));
                     cc_axon_noise = axon_noise(:,:,net.idx.cc);
                     avg_axon_noise = sum(abs(cc_axon_noise(:))) / nnz(cc_axon_noise);%pats.npat / length(net.idx.cc);
-                    fprintf('Average noise per pattern per synapse: %.2e, or %.2f%% of cc activation\n',  avg_axon_noise, 100 * avg_axon_noise / avg_cc_act);
+                    fprintf('Average noise per pattern per synapse: %.2e = %.2f%% of mean, %.2f%% variance of cc activation\n', avg_axon_noise, 100 * avg_axon_noise / avg_cc_act, 100 * avg_axon_noise / std_cc_act);
+                    keyboard;
                 end;
 
-                x(ti,:,:)   = sum(w_repd .* (y_d+axon_noise), 2);  % finally add in the noise
+                x(ti,:,:)   = sum(w_repd .* (y_d + axon_noise), 2);  % finally add in the noise
             end;
 
             fx(ti,:,:)  = net.fn.f (x(ti,:,:));

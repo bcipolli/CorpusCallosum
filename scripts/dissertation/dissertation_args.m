@@ -9,7 +9,7 @@ function net = dissertation_args(tsteps, Idel, Idur, Sdel, Sdur)
 
     if ~exist('tsteps', 'var') || isempty(tsteps), tsteps = 30; end;
     if ~exist('Idel', 'var')   || isempty(Idel),   Idel   = 1; end;
-    if ~exist('Idur', 'var')   || isempty(Idur),   Idur   = tsteps - Idel; end;
+    if ~exist('Idur', 'var')   || isempty(Idur),   Idur   = 6; end;
     if ~exist('Sdel', 'var')   || isempty(Sdel),   Sdel   = 0; end;
     if ~exist('Sdur', 'var')   || isempty(Sdur),   Sdur   = 1; end;
 
@@ -52,7 +52,7 @@ function net = dissertation_args(tsteps, Idel, Idur, Sdel, Sdur)
 
     net.sets.nhidden_per      = 15;%
 
-    net.sets.axon_noise       = 2*2E-3;  % 2E-3 on delay=10 will give 1% average noise
+    net.sets.axon_noise       = 0.02;  % 2% average noise
     net.sets.activity_dependent = true;  % if there is noise, make it activity-dependent
     net.sets.noise_init       = 0;
     net.sets.noise_input      = 0; %%1E-6;  % Noisy input
