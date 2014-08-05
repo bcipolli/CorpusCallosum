@@ -1,11 +1,7 @@
 function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_lewis_elman(sets, opt)
 
     % Default: do as done in L&E, 2008
-<<<<<<< Updated upstream
     if ~exist('opt','var'), opt = ''; end;
-=======
-    if ~exist('opt','var'), opt='asymmetric-symmetric'; end;
->>>>>>> Stashed changes
 
     % From table in lewis & elman (2008)
     % First 16 patterns (rows):  inter

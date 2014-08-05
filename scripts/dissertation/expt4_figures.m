@@ -34,7 +34,7 @@ function [fh] = expt4_figures(force)
 
         fprintf('%s\n', datasets{d1});
         for fignum=[0.6 0.8 1.4 1.6 2.2 3.2 3.3]
-            continue;
+            %continue;
             ringo_figures(nonoise_dir, noise_dir, fignum, cache_file);
             %[~,~,oh] = legend();
             %title(sprintf('Effects of noise (%s, ncc=%d; %s)', plot_escape(datasets{d1}), ncc, get(get(gca,'Title'), 'String')));
