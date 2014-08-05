@@ -13,7 +13,7 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
 %
 %
 % dirs: string, or cell array of strings.
-% cache_file: 
+% cache_file:
 %
 %
 % data: summarized data blob
@@ -22,38 +22,38 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
 
     global g_data_cache g_dir_cache g_sets_cache;
     if isnumeric(g_dir_cache) % initialize kindly :)
-      g_dir_cache={}; 
-      g_data_cache={}; 
+      g_dir_cache={};
+      g_data_cache={};
       g_sets_cache={};
     end;
-    
+
     % Default loading
     if ~exist('cache_file','var'), cache_file = ''; end;
     if ~exist('force_load','var'), force_load = false; end;
     if ischar(dirs), dirs = {dirs}; end;
-    
+
     % get just the directory name, eliminate any path
-    dirnames = @(ds) cellfun(@(d) guru_fileparts(d,'name'), ds, 'UniformOutput',false); 
-    
+    dirnames = @(ds) cellfun(@(d) guru_fileparts(d,'name'), ds, 'UniformOutput',false);
+
     % Add extension to the cache file
     if ~isempty(cache_file) && ~strcmp('.mat', guru_fileparts(cache_file, 'ext'))
     keyboard
         cache_file = [cache_file '.mat'];
     end;
 
-    
+
     % Get all data into global cache
     remain_dirs = dirs;
     mi=1;
     while ~isempty(remain_dirs) && mi<=4
         switch mi
-            
+
             case 1 % from global cache
                 if force_load, mi = mi+1; continue; end;
 
                 [~,idx] = intersect(dirnames(remain_dirs), g_dir_cache);
                 cur_found_dirs = remain_dirs(idx);
-                
+
             case 2  % Look inside the cache file
                 if force_load, mi = mi+1; continue;
                 elseif isempty(cache_file), mi=mi+1; continue;
@@ -65,9 +65,9 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
 
                 [~,idx] = intersect(dirnames(remain_dirs), g_dir_cache);
                 cur_found_dirs = remain_dirs(idx);
-                
+
             case 3 % Summarize directly from disk
-                
+
                 for di=1:length(remain_dirs)
                   % Get the approriate directory
                   d = remain_dirs{di};
@@ -77,9 +77,9 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
 
                   % Load the data
                   [g_data_cache{end+1},g_sets_cache{end+1}] = collect_data(d);
-                  [g_dir_cache(end+1)]                      = dirnames({d}); 
+                  [g_dir_cache(end+1)]                      = dirnames({d});
                 end;
-                
+
                 [~,idx] = intersect(dirnames(remain_dirs), g_dir_cache);
                 cur_found_dirs = remain_dirs(idx);
         end;
@@ -87,13 +87,13 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
         remain_dirs = setdiff(remain_dirs, cur_found_dirs);
         mi = mi+1;
     end;
-    fprintf('Completed search with method = %d\n', mi-1);
-    
+    fprintf('Completed search for cached data with method = %d\n', mi-1);
+
     % Didn't find all
     if ~isempty(remain_dirs)
         error('Couldn''t find some data in global cache, cache file, nor at speicfied location: %s', [remain_dirs{:}]);
     end;
-    
+
 
     % Found all & loaded into global cache; extract & return!
     [~,idx] = ismember(dirnames(dirs), g_dir_cache);

@@ -112,32 +112,61 @@ end;
 
 
 
-function f = plot_hu_sim(cdata, ndata)
+function f = plot_hu_sim(cdata, ndata, lbl)
 %
 %
+    if ~exist('lbl', 'var'), lbl = '';
+    else, lbl = [' ' lbl]; end;
+
     f = figure;
+
+    cdata_rh = cdata.intact.rh_sim;
+    cdata_lh = cdata.intact.lh_sim;
+    ndata_rh = ndata.intact.rh_sim;
+    ndata_lh = ndata.intact.lh_sim;
     
     subplot(2,2,1);
-    imagesc(cdata.intact.rh_sim);
+    imagesc(pdist2mat(mean(cdata_rh)));
     set(gca, 'xtick',[],'ytick',[]);
-    title('(no-noise) RH Similarity (intact)');
-
+    title(['(no-noise) RH Similarity' lbl]);
+    
     subplot(2,2,2);
-    imagesc(cdata.lesion.rh_sim);
+    imagesc(pdist2mat(mean(cdata_lh)));
     set(gca, 'xtick',[],'ytick',[]);
-    title('(no-noise) RH Similarity (lesion)');
+    title(['(no-noise) LH Similarity' lbl]);
 
     subplot(2,2,3);
-    imagesc(ndata.intact.lh_sim);
+    imagesc(pdist2mat(mean(ndata_rh)));
     set(gca, 'xtick',[],'ytick',[]);
-    title('(noise) LH Similarity (intact)');
+    title(['(noise) RH Similarity' lbl]);
     
     subplot(2,2,4);
-    imagesc(ndata.lesion.lh_sim);
+    imagesc(pdist2mat(mean(ndata_lh)));
     set(gca, 'xtick',[],'ytick',[]);
     xlabel('LH pattern #');
-    title('(noise) LH Similarity (lesion)');
+    title(['(noise) LH Similarity' lbl]);
 
+    mean_dotted = @(d1, d2) ((mean(sum(d1 .* d2, 2) ./ sqrt(sum(d1.^2, 2)) ./ sqrt(sum(d2.^2, 2)))));
+    shared_count = min(size(cdata_lh,1), size(ndata_lh, 1));
+    
+    if (numel(cdata_rh) > 0)
+        fprintf('no-noise LH-RH similarity (%s): %f\n', lbl, mean_dotted(cdata_rh, cdata_lh));
+        fprintf('   noise LH-RH similarity (%s): %f\n', lbl, mean_dotted(ndata_rh, ndata_lh));
+        fprintf('no/noise LH-LH similarity (%s): %f\n', lbl, mean_dotted(cdata_lh(1:shared_count), ndata_lh(1:shared_count)));
+        fprintf('no/noise RH-RH similarity (%s): %f\n', lbl, mean_dotted(cdata_rh(1:shared_count), ndata_rh(1:shared_count)));
+    end;    
+   
+function mat = pdist2mat(dat)
+    sz =  (1 + sqrt(1 + 4*1*2*numel(dat))) / 2;  % quadratic solution for M(M-1)/2 = numel(dat)
+    guru_assert(sz == floor(sz), 'sz is an integer.');
+    
+    lower =  double(~triu(ones(sz)));
+    upper = double(~~triu(ones(sz)) - eye(sz));
+    
+    lower(logical(lower)) = dat; 
+    upper(logical(upper)) = dat;     
+    mat = lower + upper;
+    
     
 function f = plot_hu_sim2(cdata, ndata, lbl)
 %
@@ -170,40 +199,8 @@ function f = plot_hu_sim2(cdata, ndata, lbl)
     fprintf('[%s]: RH / LH   noise similarity: (intact): %.2f +/- %.2f\n', lbl, mean(sims_noise_intact),   std(sims_noise_intact));
     fprintf('[%s]: RH / LH no-noise similarity (lesion): %.2f +/- %.2f\n', lbl, mean(sims_nonoise_lesion), std(sims_nonoise_lesion));
     fprintf('[%s]: RH / LH   noise similarity: (lesion): %.2f +/- %.2f\n', lbl, mean(sims_noise_lesion),   std(sims_noise_lesion));
-    
-    f = figure;
-    
-    %keyboard
-    
-%     keyboard
-%     
-%     f = figure;
-%     
-%     subplot(2,2,1);
-%     imagesc(corr(cdata.intact.rh_sim', cdata.intact.lh_sim'), [-1 1]);
-%     dp = dot(cdata.intact.rh_sim(:), cdata.intact.lh_sim(:));
-%     set(gca, 'xtick',[],'ytick',[]);
-%     title(sprintf('RH / LH no-noise similarity (dot-prod = %.2f)', dp));
-% 
-%     subplot(2,2,2);
-%     imagesc(corr(cdata.lesion.rh_sim', cdata.lesion.lh_sim), [-1 1]);
-%     dp = dot(cdata.lesion.rh_sim(:), cdata.lesion.lh_sim(:));
-%     set(gca, 'xtick',[],'ytick',[]);
-%     title(sprintf('RH / LH no-noise lesion similarity (dot-prod = %.2f)', dp));
-% 
-%     subplot(2,2,3);
-%     imagesc(corr(ndata.intact.rh_sim, ndata.intact.lh_sim), [-1 1]);
-%     dp = dot(ndata.intact.rh_sim(:), ndata.intact.lh_sim(:));
-%     set(gca, 'xtick',[],'ytick',[]);
-%     title(sprintf('RH / LH noise similarity (dot-prod = %.2f)', dp));
-% 
-%     
-%     subplot(2,2,4);
-%     imagesc(corr(ndata.lesion.rh_sim, ndata.lesion.lh_sim), [-1 1]);
-%     dp = dot(ndata.lesion.rh_sim(:), ndata.lesion.lh_sim(:));
-%     set(gca, 'xtick',[],'ytick',[]);
-%     title(sprintf('RH / LH noise lesion similarity (dot-prod = %.2f)', dp));
 
+    f = plot_hu_sim(cdata, ndata, lbl);
     
     
 function f = plot_lei_split(cdata,ndata,ts,dtype,h,p)
