@@ -57,8 +57,9 @@ function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_lewis_elman(sets, 
     idx.intra = size(pats,1)/2+1:size(pats,1);  % rows
 
     if ~isempty(opt)
+        %keyboard
 
-        % randomization procedure
+        % DISABLED: randomization procedure
         spats   = char(pats+'0');
         decpats = [bin2dec(spats(:,idx.lh.in)) ... % convert each set of patterns to decimal numbers, in sets of 5
                    bin2dec(spats(:,idx.lh.out))  ...
@@ -75,7 +76,7 @@ function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_lewis_elman(sets, 
         for ii=0:31, newdecpats(decpats==ii) = replacmt(ii+1); end;
 
         newpats = reshape( dec2bin(newdecpats)-'0', size(pats) );
-        pats    = newpats;
+        %pats    = newpats;
 
         % choose options
         switch opt
