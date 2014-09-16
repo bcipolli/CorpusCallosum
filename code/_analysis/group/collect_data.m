@@ -33,20 +33,21 @@ function [an,sets] = collect_data(dirname, resave)
   an.inter.lesion.clserr = nan(size(an.inter.lesion.err));
   an.all.lesion.clserr   = nan(size(an.all.lesion.err));
 
-    m = @(npat) npat*(npat-1)/2;  % similarity matrix is symmetric, so only diagonal & upper triangle need to be computed
-    an.all.lesion.rh_sim = nan(length(blobs), m(pats.test.npat));
-    an.all.lesion.lh_sim = nan(length(blobs), m(pats.test.npat));
-    an.intra.lesion.rh_sim = nan(length(blobs), m(length(pats.idx.intra)));
-    an.intra.lesion.lh_sim = nan(length(blobs), m(length(pats.idx.intra)));
-    an.inter.lesion.rh_sim = nan(length(blobs), m(length(pats.idx.inter)));
-    an.inter.lesion.lh_sim = nan(length(blobs), m(length(pats.idx.inter)));
 
-    an.all.intact.rh_sim = nan(length(blobs), m(pats.test.npat));
-    an.all.intact.lh_sim = nan(length(blobs), m(pats.test.npat));
-    an.intra.intact.rh_sim = nan(length(blobs), m(length(pats.idx.intra)));
-    an.intra.intact.lh_sim = nan(length(blobs), m(length(pats.idx.intra)));
-    an.inter.intact.rh_sim = nan(length(blobs), m(length(pats.idx.inter)));
-    an.inter.intact.lh_sim = nan(length(blobs), m(length(pats.idx.inter)));
+  m = @(npat) npat*(npat-1)/2;  % similarity matrix is symmetric, so only diagonal & upper triangle need to be computed
+  an.all.lesion.rh_sim = nan(length(blobs), m(pats.test.npat));
+  an.all.lesion.lh_sim = nan(length(blobs), m(pats.test.npat));
+  an.intra.lesion.rh_sim = nan(length(blobs), m(length(pats.idx.intra)));
+  an.intra.lesion.lh_sim = nan(length(blobs), m(length(pats.idx.intra)));
+  an.inter.lesion.rh_sim = nan(length(blobs), m(length(pats.idx.inter)));
+  an.inter.lesion.lh_sim = nan(length(blobs), m(length(pats.idx.inter)));
+
+  an.all.intact.rh_sim = nan(length(blobs), m(pats.test.npat));
+  an.all.intact.lh_sim = nan(length(blobs), m(pats.test.npat));
+  an.intra.intact.rh_sim = nan(length(blobs), m(length(pats.idx.intra)));
+  an.intra.intact.lh_sim = nan(length(blobs), m(length(pats.idx.intra)));
+  an.inter.intact.rh_sim = nan(length(blobs), m(length(pats.idx.inter)));
+  an.inter.intact.lh_sim = nan(length(blobs), m(length(pats.idx.inter)));
 
   %% Loop and fill in data
   for bi=1:length(blobs)
@@ -152,6 +153,17 @@ function [an,sets] = collect_data(dirname, resave)
     an.intra.intact.lh_sim(bi,:) = pdist(act_intact(pats.idx.intra, lh_idx), 'correlation');
     an.inter.intact.rh_sim(bi,:) = pdist(act_intact(pats.idx.inter, rh_idx), 'correlation');
     an.inter.intact.lh_sim(bi,:) = pdist(act_intact(pats.idx.inter, lh_idx), 'correlation');
+
+    rh_in =  squeeze(b.pats.train.P(2,:,b.pats.idx.rh.in)); % avoid the bias term
+    lh_in =  squeeze(b.pats.train.P(2,:,b.pats.idx.lh.in));
+    rh_out =  squeeze(b.pats.train.d(1,:,b.pats.idx.rh.out));
+    lh_out =  squeeze(b.pats.train.d(1,:,b.pats.idx.lh.out));
+
+    an.all.rh_in_sim = pdist(rh_in, 'correlation');
+    an.all.lh_in_sim = pdist(lh_in, 'correlation');
+    an.all.rh_out_sim = pdist(rh_out, 'correlation');
+    an.all.lh_out_sim = pdist(lh_out, 'correlation');
+
 
 %
 %
