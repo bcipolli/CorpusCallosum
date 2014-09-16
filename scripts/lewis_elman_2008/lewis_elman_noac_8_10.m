@@ -67,7 +67,7 @@ end;
 
 %
 if net.sets.run
-    r_looper(net, 10); % run 25 network instances
+    [nets, pats, datas] = r_looper(net, 10); % run 25 network instances
     %[net,pats,data]          = r_main(net);
     %[data.an]                = r_analyze(net, pats, data);
 end;

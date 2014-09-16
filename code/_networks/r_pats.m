@@ -8,6 +8,14 @@ function [pats] = r_pats(net)
 
     % Directly from the given function
     [train.inpat, train.outpat, pats.cls, pats.lbls, pats.idx] = net.fn.pats(net.sets);
+    if isempty(pats.idx)
+        guru_assert(mod(size(train.inpat, 2), 2) == 0, 'Make sure input patterns are equal across left and right hemispheres.');
+        pats.idx.rh.in = 1:(size(train.inpat,2)/2);
+        pats.idx.lh.in = pats.idx.rh.in(end) + pats.idx.rh.in;
+        pats.idx.rh.out = 1:(size(train.outpat,2)/2);
+        pats.idx.lh.out = pats.idx.rh.out(end) + pats.idx.rh.out;
+    end;
+    
     pats.idx.rh.in = 1:length(pats.idx.rh.in);
     pats.idx.rh.out = pats.idx.rh.in;
     pats.idx.lh.in = pats.idx.rh.in(end) + [1:length(pats.idx.lh.in)];

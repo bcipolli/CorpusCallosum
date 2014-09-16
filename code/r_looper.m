@@ -1,4 +1,4 @@
-function r_looper(net, n_nets)
+function [nets, pats, datas] = r_looper(net, n_nets)
 %function r_looper(net, n_nets)
 %
 % Loops over some # of networks to execute them.
@@ -13,14 +13,16 @@ function r_looper(net, n_nets)
 
     % Get random seed, save default network settings
     min_rseed = net.sets.rseed;
-    sets= net.sets;
+    sets = net.sets;
 
-    parfor s=(min_rseed-1+[1:n_nets])
-        r_dummy(sets, s);
+    nets = cell(n_nets, 1);
+    datas = cell(n_nets, 1);
+    for si=(min_rseed-1+[1:n_nets])
+        [nets{si}, pats, datas{si}] = r_dummy(sets, si);
     end;
 
 
-function r_dummy(sets, s)
+function [net, pats, data] = r_dummy(sets, s)
 
    % Make sure not to reuse networks!
    net.sets = sets;
