@@ -6,7 +6,7 @@ if exist('matlabpool','file'), chunk_size = matlabpool('size');
 else, chunk_size = 1; end;
 
 for rseed=(289-1+[1:chunk_size:10])
-for ncc = [0 15]
+for ncc = [0 10]
 for axon_noise = [0]
   for dataset = {'symmetric_symmetric'}
 
