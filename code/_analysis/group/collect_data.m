@@ -49,37 +49,53 @@ function [an,sets] = collect_data(dirname, resave)
   an.inter.intact.rh_sim = nan(length(blobs), m(length(pats.idx.inter)));
   an.inter.intact.lh_sim = nan(length(blobs), m(length(pats.idx.inter)));
 
+  
   %% Loop and fill in data
   for bi=1:length(blobs)
     b = blobs{bi};
     data = b.data; pats = b.pats; net = b.net;
     sets{end+1} = net.sets;
-
+    has_intra = false;
+    
     %% Weights
-    an.intra.weights.lh(bi,:,:) = net.w(b.net.idx.lh_ih, net.idx.lh_ih);
-    an.intra.weights.rh(bi,:,:) = net.w(b.net.idx.rh_ih, net.idx.rh_ih);
-    an.inter.weights.lh(bi,:,:) = net.w(b.net.idx.lh_cc, net.idx.lh_cc);
-    an.inter.weights.rh(bi,:,:) = net.w(b.net.idx.rh_cc, net.idx.rh_cc);
-
+    an.all.weights.lh(bi,:,:) = net.w(b.net.idx.lh_ih, net.idx.lh_ih);
+    an.all.weights.rh(bi,:,:) = net.w(b.net.idx.rh_ih, net.idx.rh_ih);
+    if has_intra
+        an.intra.weights.lh(bi,:,:) = net.w(b.net.idx.lh_ih, net.idx.lh_ih);
+        an.intra.weights.rh(bi,:,:) = net.w(b.net.idx.rh_ih, net.idx.rh_ih);
+        an.inter.weights.lh(bi,:,:) = net.w(b.net.idx.lh_cc, net.idx.lh_cc);
+        an.inter.weights.rh(bi,:,:) = net.w(b.net.idx.rh_cc, net.idx.rh_cc);
+    end;
+    
     %% Sum-squared error
-    an.intra.intact.err(bi,1:size(data.E_pat,1)) = squeeze(mean(mean(data.E_pat(:,pats.idx.intra,:),3),2))';
-    an.inter.intact.err(bi,1:size(data.E_pat,1)) = squeeze(mean(mean(data.E_pat(:,pats.idx.inter,:),3),2))';
+    if has_intra
+        an.intra.intact.err(bi,1:size(data.E_pat,1)) = squeeze(mean(mean(data.E_pat(:,pats.idx.intra,:),3),2))';
+        an.inter.intact.err(bi,1:size(data.E_pat,1)) = squeeze(mean(mean(data.E_pat(:,pats.idx.inter,:),3),2))';
+    end;
     an.all.intact.err(bi,1:size(data.E_pat,1))   = squeeze(mean(mean(data.E_pat(:,:,:),3),2))';
-    an.intra.lesion.err(bi,1:size(data.E_lesion,1)) = mean(mean(data.E_lesion(:,pats.idx.intra,:),3),2)';
-    an.inter.lesion.err(bi,1:size(data.E_lesion,1)) = mean(mean(data.E_lesion(:,pats.idx.inter,:),3),2)';
+    if has_intra
+        an.intra.lesion.err(bi,1:size(data.E_lesion,1)) = mean(mean(data.E_lesion(:,pats.idx.intra,:),3),2)';
+        an.inter.lesion.err(bi,1:size(data.E_lesion,1)) = mean(mean(data.E_lesion(:,pats.idx.inter,:),3),2)';
+    end;
     an.all.lesion.err(bi,1:size(data.E_lesion,1))   = mean(mean(data.E_lesion(:,:,:),3),2)';
 
     % Fake (propagate) values for early stopping
-    an.intra.intact.err(bi,size(data.E_pat,1)+1:end)    = an.intra.intact.err(bi,size(data.E_pat,1));
-    an.inter.intact.err(bi,size(data.E_pat,1)+1:end)    = an.inter.intact.err(bi,size(data.E_pat,1));
+    if has_intra
+        an.intra.intact.err(bi,size(data.E_pat,1)+1:end)    = an.intra.intact.err(bi,size(data.E_pat,1));
+        an.inter.intact.err(bi,size(data.E_pat,1)+1:end)    = an.inter.intact.err(bi,size(data.E_pat,1));
+    end;
     an.all.intact.err(bi,size(data.E_pat,1)+1:end)      = an.all.intact.err(bi,size(data.E_pat,1));
-    an.intra.lesion.err(bi,size(data.E_lesion,1)+1:end) = an.intra.lesion.err(bi,size(data.E_lesion,1));
-    an.inter.lesion.err(bi,size(data.E_lesion,1)+1:end) = an.inter.lesion.err(bi,size(data.E_lesion,1));
-    an.all.lesion.err(bi,size(data.E_lesion,1)+1:end)   = an.all.lesion.err(bi,size(data.E_lesion,1));
+    if has_intra
+        an.intra.lesion.err(bi,size(data.E_lesion,1)+1:end) = an.intra.lesion.err(bi, max(1,size(data.E_lesion,1)));
+        an.inter.lesion.err(bi,size(data.E_lesion,1)+1:end) = an.inter.lesion.err(bi, max(1,size(data.E_lesion,1)));
+    end;
+    an.all.lesion.err(bi,size(data.E_lesion,1)+1:end)   = an.all.lesion.err(bi, max(1,size(data.E_lesion,1)));
 
     % Some aggregates and differences
-    an.intra.lei.err  = -(an.intra.intact.err(:,100:100:end) - an.intra.lesion.err);
-    an.inter.lei.err  = -(an.inter.intact.err(:,100:100:end) - an.inter.lesion.err);
+    if has_intra
+        an.intra.lei.err  = -(an.intra.intact.err(:,100:100:end) - an.intra.lesion.err);
+        an.inter.lei.err  = -(an.inter.intact.err(:,100:100:end) - an.inter.lesion.err);
+    end;
     an.all.lei.errmean = mean(an.all.lesion.err,1) - mean(an.all.intact.err(:,an.ts.lesion),1);
     an.all.lei.errstd = std(an.all.lesion.err,[],1) + std(an.all.intact.err(:,an.ts.lesion),[],1);
     an.all.lei.errsem = guru_sem(an.all.lesion.err, 1) + guru_sem(an.all.intact.err(:,an.ts.lesion), 1);
@@ -91,32 +107,44 @@ function [an,sets] = collect_data(dirname, resave)
     diff_intact = sqrt(2*data.E_pat); %reverse SSE to get activation
     diff_lesion = sqrt(2*data.E_lesion);
 
-    an.intra.intact.clserr(bi,1:size(diff_intact,1)) = mean(mean( diff_intact(:,pats.idx.intra,:)>=net.sets.train_criterion, 3),2);
-    an.inter.intact.clserr(bi,1:size(diff_intact,1)) = mean(mean( diff_intact(:,pats.idx.inter,:)>=net.sets.train_criterion, 3),2);
+    if has_intra
+        an.intra.intact.clserr(bi,1:size(diff_intact,1)) = mean(mean( diff_intact(:,pats.idx.intra,:)>=net.sets.train_criterion, 3),2);
+        an.inter.intact.clserr(bi,1:size(diff_intact,1)) = mean(mean( diff_intact(:,pats.idx.inter,:)>=net.sets.train_criterion, 3),2);
+    end;
     an.all.intact.clserr(bi,1:size(diff_intact,1))   = mean(mean( diff_intact(:,:,:)>=net.sets.train_criterion, 3),2);
-    an.intra.lesion.clserr(bi,1:size(diff_lesion,1)) = mean(mean( diff_lesion(:,pats.idx.intra,:)>=net.sets.train_criterion, 3),2);
-    an.inter.lesion.clserr(bi,1:size(diff_lesion,1)) = mean(mean( diff_lesion(:,pats.idx.inter,:)>=net.sets.train_criterion, 3),2);
+    if has_intra
+        an.intra.lesion.clserr(bi,1:size(diff_lesion,1)) = mean(mean( diff_lesion(:,pats.idx.intra,:)>=net.sets.train_criterion, 3),2);
+        an.inter.lesion.clserr(bi,1:size(diff_lesion,1)) = mean(mean( diff_lesion(:,pats.idx.inter,:)>=net.sets.train_criterion, 3),2);
+    end;
     an.all.lesion.clserr(bi,1:size(diff_lesion,1))   = mean(mean( diff_lesion(:,:,:)>=net.sets.train_criterion, 3),2);
     %if bi == 25, keyboard;end;
 
     % ????
-    an.intra.lesion.err(bi,1:size(data.E_lesion,1)) = mean(mean(data.E_lesion(:,pats.idx.intra,:),3),2)';
-    an.intra.lesion.clserr(bi,1:size(diff_lesion,1)) = mean(mean( diff_lesion(:,pats.idx.intra,:)>=net.sets.train_criterion, 3),2);
-
+    if has_intra
+        an.intra.lesion.err(bi,1:size(data.E_lesion,1)) = mean(mean(data.E_lesion(:,pats.idx.intra,:),3),2)';
+        an.intra.lesion.clserr(bi,1:size(diff_lesion,1)) = mean(mean( diff_lesion(:,pats.idx.intra,:)>=net.sets.train_criterion, 3),2);
+    end;
+    
     % Fake (propagate) values for early stopping
-    an.intra.intact.clserr(bi,size(diff_intact,1)+1:end) = an.intra.intact.clserr(bi,size(diff_intact,1));
-    an.inter.intact.clserr(bi,size(diff_intact,1)+1:end) = an.inter.intact.clserr(bi,size(diff_intact,1));
+    if has_intra
+        an.intra.intact.clserr(bi,size(diff_intact,1)+1:end) = an.intra.intact.clserr(bi,size(diff_intact,1));
+        an.inter.intact.clserr(bi,size(diff_intact,1)+1:end) = an.inter.intact.clserr(bi,size(diff_intact,1));
+    end;
     an.all.intact.clserr(bi,size(diff_intact,1)+1:end)   = an.all.intact.clserr(bi,size(diff_intact,1));
-    an.intra.lesion.clserr(bi,size(diff_lesion,1)+1:end) = an.intra.lesion.clserr(bi,size(diff_lesion,1));
-    an.inter.lesion.clserr(bi,size(diff_lesion,1)+1:end) = an.inter.lesion.clserr(bi,size(diff_lesion,1));
-    an.all.lesion.clserr(bi,size(diff_lesion,1)+1:end)   = an.all.lesion.clserr(bi,size(diff_lesion,1));
+    if has_intra
+        an.intra.lesion.clserr(bi,size(diff_lesion,1)+1:end) = an.intra.lesion.clserr(bi, max(1,size(diff_lesion,1)));
+        an.inter.lesion.clserr(bi,size(diff_lesion,1)+1:end) = an.inter.lesion.clserr(bi, max(1,size(diff_lesion,1)));
+    end;
+    an.all.lesion.clserr(bi,size(diff_lesion,1)+1:end)   = an.all.lesion.clserr(bi, max(1,size(diff_lesion,1)));
 
     % Some aggregates and differences
     %an.all.intact.clserr = (an.intra.intact.clserr + an.inter.intact.clserr)/2;
     %an.all.lesion.clserr = (an.intra.lesion.clserr + an.inter.lesion.clserr)/2;
-    an.intra.lei.cls = -(an.intra.intact.clserr(:,100:100:end) - an.intra.lesion.clserr);
-    an.inter.lei.cls = -(an.inter.intact.clserr(:,100:100:end) - an.inter.lesion.clserr);
-
+    if has_intra
+        an.intra.lei.cls = -(an.intra.intact.clserr(:,100:100:end) - an.intra.lesion.clserr);
+        an.inter.lei.cls = -(an.inter.intact.clserr(:,100:100:end) - an.inter.lesion.clserr);
+    end;
+    
     an.all.lei.clsmean = mean(an.all.lesion.clserr,1) - mean(an.all.intact.clserr(:,an.ts.lesion),1);
     an.all.lei.clsstd  = std(an.all.lesion.clserr,[],1) + std(an.all.intact.clserr(:,an.ts.lesion),[],1);
     an.all.lei.clssem  = guru_sem(an.all.lesion.clserr, 1) + guru_sem(an.all.intact.clserr(:,an.ts.lesion), 1);
@@ -140,20 +168,28 @@ function [an,sets] = collect_data(dirname, resave)
     last_iter_idx = find(sum_act_intact, 1, 'last');
     act_intact = squeeze(b.data.hu_pat(last_iter_idx, :, :));  % patterns x hidden units
 
-    an.all.lesion.rh_sim(bi,:) = pdist(act_lesion(:, rh_idx), 'correlation');
-    an.all.lesion.lh_sim(bi,:) = pdist(act_lesion(:, lh_idx), 'correlation');
-    an.intra.lesion.rh_sim(bi,:) = pdist(act_lesion(pats.idx.intra, rh_idx), 'correlation');
-    an.intra.lesion.lh_sim(bi,:) = pdist(act_lesion(pats.idx.intra, lh_idx), 'correlation');
-    an.inter.lesion.rh_sim(bi,:) = pdist(act_lesion(pats.idx.inter, rh_idx), 'correlation');
-    an.inter.lesion.lh_sim(bi,:) = pdist(act_lesion(pats.idx.inter, lh_idx), 'correlation');
-
-    an.all.intact.rh_sim(bi,:) = pdist(act_intact(:, rh_idx), 'correlation');
-    an.all.intact.lh_sim(bi,:) = pdist(act_intact(:, lh_idx), 'correlation');
-    an.intra.intact.rh_sim(bi,:) = pdist(act_intact(pats.idx.intra, rh_idx), 'correlation');
-    an.intra.intact.lh_sim(bi,:) = pdist(act_intact(pats.idx.intra, lh_idx), 'correlation');
-    an.inter.intact.rh_sim(bi,:) = pdist(act_intact(pats.idx.inter, rh_idx), 'correlation');
-    an.inter.intact.lh_sim(bi,:) = pdist(act_intact(pats.idx.inter, lh_idx), 'correlation');
-
+    if ~isempty(act_lesion)
+        an.all.lesion.rh_sim(bi,:) = pdist(act_lesion(:, rh_idx), 'correlation');
+        an.all.lesion.lh_sim(bi,:) = pdist(act_lesion(:, lh_idx), 'correlation');
+        if has_intra
+            an.intra.lesion.rh_sim(bi,:) = pdist(act_lesion(pats.idx.intra, rh_idx), 'correlation');
+            an.intra.lesion.lh_sim(bi,:) = pdist(act_lesion(pats.idx.intra, lh_idx), 'correlation');
+            an.inter.lesion.rh_sim(bi,:) = pdist(act_lesion(pats.idx.inter, rh_idx), 'correlation');
+            an.inter.lesion.lh_sim(bi,:) = pdist(act_lesion(pats.idx.inter, lh_idx), 'correlation');
+        end;
+    end;
+    
+    if ~isempty(act_intact)
+        an.all.intact.rh_sim(bi,:) = pdist(act_intact(:, rh_idx), 'correlation');
+        an.all.intact.lh_sim(bi,:) = pdist(act_intact(:, lh_idx), 'correlation');
+        if has_intra
+            an.intra.intact.rh_sim(bi,:) = pdist(act_intact(pats.idx.intra, rh_idx), 'correlation');
+            an.intra.intact.lh_sim(bi,:) = pdist(act_intact(pats.idx.intra, lh_idx), 'correlation');
+            an.inter.intact.rh_sim(bi,:) = pdist(act_intact(pats.idx.inter, rh_idx), 'correlation');
+            an.inter.intact.lh_sim(bi,:) = pdist(act_intact(pats.idx.inter, lh_idx), 'correlation');
+        end;
+    end;
+    
     rh_in =  squeeze(b.pats.train.P(2,:,b.pats.idx.rh.in)); % avoid the bias term
     lh_in =  squeeze(b.pats.train.P(2,:,b.pats.idx.lh.in));
     rh_out =  squeeze(b.pats.train.d(1,:,b.pats.idx.rh.out));
