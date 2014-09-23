@@ -18,32 +18,34 @@ function [nets, pats, datas] = r_looper(net, n_nets)
     nets = cell(n_nets, 1);
     datas = cell(n_nets, 1);
     for si=(min_rseed-1+[1:n_nets])
-        [nets{si}, pats, datas{si}] = r_dummy(sets, si);
+        ii = si - min_rseed + 1;
+        [nets{ii}, pats, datas{ii}] = r_dummy(sets, si);
     end;
 
 
-function [net, pats, data] = r_dummy(sets, s)
+function [net, pats, data] = r_dummy(sets, rseed)
 
    % Make sure not to reuse networks!
    net.sets = sets;
-   net.sets.rseed = s;
+   net.sets.rseed = rseed;
 
     %
     net = r_massage_params(net);
     matfile = fullfile(net.sets.dirname, net.sets.matfile);
     if exist(matfile, 'file')
         fprintf('Skipping %s\n', matfile);
+        load(matfile);
         return;
     end; % don't re-run
 
     %
     if ~exist(net.sets.dirname,'dir'), mkdir(net.sets.dirname); end;
 
-    try
+    %try
      [net,pats,data]          = r_main(net);
      [data.an]                = r_analyze(net, pats, data);
      %unix(['mv ' net.sets.matfile ' ./' net.sets.dirname]);
-   catch err
-     fprintf('Error: %s\nCall stack:\n', err.message);
-     fprintf('\t%s\n', err.stack.file)
-   end;
+   %catch err
+   %  fprintf('Error: %s\nCall stack:\n', err.message);
+   %  fprintf('\t%s\n', err.stack.file)
+   %end;

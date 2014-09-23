@@ -15,12 +15,7 @@ function [pats] = r_pats(net)
         pats.idx.rh.out = 1:(size(train.outpat,2)/2);
         pats.idx.lh.out = pats.idx.rh.out(end) + pats.idx.rh.out;
     end;
-    
-    pats.idx.rh.in = 1:length(pats.idx.rh.in);
-    pats.idx.rh.out = pats.idx.rh.in;
-    pats.idx.lh.in = pats.idx.rh.in(end) + [1:length(pats.idx.lh.in)];
-    pats.idx.lh.out = pats.idx.lh.in;
-    
+        
     % Don't set test; use train as test
     test         = train;
 

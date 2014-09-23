@@ -1,5 +1,10 @@
 function [net] = r_init_lewis_elman(net, pats)
-    
+% Single hidden layer architecture with net.ncc
+% interhemispherically-connecting hidden units.
+%
+% # input & output units determined from the 
+%   patterns supplied.
+
     %%%%%%%%%%%%%%%%%%%%
     % Set up network structure
     %%%%%%%%%%%%%%%%%%%%

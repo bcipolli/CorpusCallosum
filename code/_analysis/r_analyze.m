@@ -36,5 +36,8 @@ function [an] = r_analyze(net, pats, d)
         %d.lesion.avgerr - d.nolesion.avgerr         % Hemispheric diff in activation
         
         % Sub-analysis
-        net.fn.analyze(net, pats, d);
-    end; 
+        if isfield(net.fn, 'analyze')
+            net.fn.analyze(net, pats, d);
+        end; 
+    end;
+    

@@ -19,6 +19,7 @@ function [net,pats,data,f,sets] = r_main(net,pats,data)
     fprintf('Training [autoencoder=%d] network with tsteps=%d, max_del=%d, to tc=%4.2f\n', ...
              (isfield(net.sets, 'autoencoder') && net.sets.autoencoder), ...
              net.sets.tsteps, max(net.sets.D_CC_INIT(:)), net.sets.train_criterion);
+
     if ~exist('data','var')
       [net,data] = net.fn.train(net,pats.train);
     else
