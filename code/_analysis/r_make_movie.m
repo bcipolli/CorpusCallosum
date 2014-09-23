@@ -1,10 +1,10 @@
 function mv = r_make_movie(net, y, pat, outfile)
 %
-close all
+    close all
 
-% Parameters & settings.
-%  tdelay === time delay between drawing consecutive frames
-%  col_fn === function to compute color of activity
+    % Parameters & settings.
+    %  tdelay === time delay between drawing consecutive frames
+    %  col_fn === function to compute color of activity
 
     if ~exist('net','var'), error('Must specify a valid network object.'); end;%net = struct('sets',struct('tsteps',35','nhidden_per',10)); end;
     if ~exist('y','var'),   y = rand(net.sets.tsteps, 32, net.ninput + net.nhidden + net.noutput +1); end;
@@ -146,19 +146,25 @@ function F = r_make_movie_le(net, y, pat, col_fn, tdelay)
     end;
 
     %%
-    h = [inl_h inr_h ihl_h ihr_h outl_h outr_h];
-    uidx = [net.idx.rh_input net.idx.lh_input ...
-            net.idx.lh_ih net.idx.lh_cc ...
-            net.idx.rh_ih net.idx.rh_cc ...
-            net.idx.rh_output net.idx.lh_output ];
+    ncc = length(net.idx.lh_cc);  % check cc, as we want to display as many of those as possible
+    h = [inl_h inr_h ... %inputs first
+         ihl_h ihr_h ... %hidden second
+         outl_h outr_h]; %output last
+    uidx = [net.idx.lh_input(1:min(end,5)) net.idx.rh_input(1:min(end,5)) ...
+            net.idx.lh_ih(1:min(10-ncc,end)) net.idx.lh_cc(1:min(10,end)) ...
+            net.idx.rh_ih(1:min(10-ncc,end)) net.idx.rh_cc(1:min(10,end)) ...
+            net.idx.lh_output(1:min(5,end)) net.idx.rh_output(1:min(end,5)) ];
     %guru_assert(length(h) == length(uidx), 'This visualization assumes 60 total nodes (10 input, 10 output, 10-10 hidden in each hemisphere).');
 
     %
     F(net.sets.tsteps) = struct('cdata',[],'colormap',[]);
 
     for ti=1:net.sets.tsteps
-        % Inputs
         for hi=1:length(h)
+            % uidx and h should be parallel arrays, so that we 
+            % grab the activation from y via uidx, and grab the proper
+            % object handle using h, and color accordingly for every 
+            % node we are drawing.
             col = col_fn(y(ti,pat,uidx(hi)));
             %if ~any(col), col = [1 1 1]; end;
             set(h(hi),'FaceColor',col);

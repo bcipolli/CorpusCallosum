@@ -1,31 +1,38 @@
 function r_make_movie_similarity(varargin)
+%
+% Input args:
+% only one arg: it's the filename.
+% two args: a net and a pat.
 
-switch length(varargin)
-    case 1
-        load(varargin{1});
-    case 2
-        net = varargin{1};
-        pats = varargin{2};
-        
-    otherwise
-        error('?');
-end;
+
+
+    switch length(varargin)
+        case 1
+            load(varargin{1});
+        case 2
+            net = varargin{1};
+            pats = varargin{2};
+
+        otherwise
+            error(sprintf('Unexpected number of input arguments.\n%s', help(mfilename)));
+    end;
 
 %% Show a similarity matrix movie.
 %load('random_t35_d10_r290_188665419.mat');
 
 % Set some analysis variables to assist, based on 
 switch net.sets.init_type
-    case 'ringo', 
-        locs = {'input', 'early_cc', 'early_ih', 'late_cc', 'late_ih','output'};
-        pat_types = {};
-    
-    case 'lewis_elman', 
-        locs = {'input', 'cc', 'ih','output'};
-        pat_types = {'inter', 'intra'};
-        
+    case 'ringo',       locs = {'input', 'early_cc', 'early_ih', 'late_cc', 'late_ih','output'};
+    case 'lewis_elman', locs = {'input', 'cc', 'ih','output'};
     otherwise, error('Unknown init_type: ''%s''', net.sets.init_type);
 end;
+
+switch net.sets.dataset
+    case {'lewis_elman'}, pat_types = {'inter', 'intra'};
+    otherwise, pat_types = {};
+end;
+
+
 pat_types = {'all', pat_types{:}};
 
 % Do the forward pass
@@ -149,7 +156,7 @@ for pti=1:npattypes
     %xlabel('time step');
 end;
 
-return;
+%return;
 
 % Show their time evolution as a movie.
 F = struct('cdata',[],'colormap',[]);
