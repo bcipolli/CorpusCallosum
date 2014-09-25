@@ -1,4 +1,5 @@
 clear globals variables;
+close all;
 addpath(genpath('code'));
 dbstop if error;
 %dbstop if warning;
@@ -7,4 +8,10 @@ net = common_args();
 net.sets.dataset = 'parity';
 net.sets.dirname = fullfile(net.sets.dirname, net.sets.dataset);
 
-[nets, pats, datas] = r_looper(net, 1); % run 25 network instances
+
+for ncc = round(linspace(0, net.sets.nhidden_per, 11)) % try 10 different values
+    net.sets.ncc = ncc;
+    [nets, pats, datas] = r_looper(net, 10); % run 25 network instances
+    [abc, def] = r_compute_similarity(nets, pats);
+    r_make_movie_similarity(nets, pats, abc, def, '', [2])
+end;
