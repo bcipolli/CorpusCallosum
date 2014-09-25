@@ -37,7 +37,13 @@ function [an] = r_analyze(net, pats, d)
         
         % Sub-analysis
         if isfield(net.fn, 'analyze')
-            net.fn.analyze(net, pats, d);
+            try
+                net.fn.analyze(net, pats, d);
+            catch exception
+                if ~strcmp(exception.identifier, 'MATLAB:UndefinedFunction')
+                    throw(exception);
+                end;
+            end;
         end; 
     end;
     
