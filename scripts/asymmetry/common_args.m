@@ -18,7 +18,7 @@ net.sets.online          = false;
 net.sets.ncc             = 2;
 net.sets.cc_wt_lim       = inf*[-1 1];
 net.sets.W_LIM           = inf*[-1 1];
-net.sets.train_criterion = 0.25;
+net.sets.train_criterion = 0.50;
 net.sets.dataset         = 'asymmetric_symmetric';
 net.sets.init_type       = 'lewis_elman';
 net.sets.train_mode      = 'resilient';
@@ -42,7 +42,7 @@ net.sets.D_CC_INIT(2,:,:) = net.sets.D_CC_INIT(1,:,:); %late;  l->r and r->l
 net.sets.eta_w           = 5E-2;    %learning rate (initial)
 net.sets.eta_w_min       = 4E-6;
 net.sets.lambda_w        = 1E-2;    % lambda*E to control kappa.
-net.sets.phi_w           = 0.25;      % multiplicative decrease to eta
+net.sets.phi_w           = 0.5;      % multiplicative decrease to eta
 net.sets.alpha_w         = 0.1;       %momentum
 
 net.sets.w_decay         = 0;%.001;
