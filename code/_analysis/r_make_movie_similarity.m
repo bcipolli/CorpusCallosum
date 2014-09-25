@@ -66,6 +66,7 @@ function r_make_movie_similarity(nets, pats, sims, simstats, xform, figs)
         for pti=1:npattypes
             subplot(1,npattypes,pti);
             errorbar(repmat(1:tsteps, [nlocs/2 1])', squeeze(simstats(:, :, pti, 5)), squeeze(simstats(:, :, pti, 6))/sqrt(nsims), 'LineWidth', 2);
+            set(gca, 'ylim', [0 1.2]);
             legend(labels);
             title(strrep([title_addendum ' ' pat_types{pti}], '_', '\_'));
             if pti == 1, ylabel('Mean difference between LH and RH similarities.'); end;
