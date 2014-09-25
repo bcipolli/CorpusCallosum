@@ -33,6 +33,7 @@ function [net,pats,data,f,sets] = r_main(net,pats,data)
     % Save result
     if ~exist(net.sets.dirname), mkdir(net.sets.dirname); end;
     outfile = fullfile(net.sets.dirname, net.sets.matfile);
-    fprintf('Saving to %s', outfile);
+    fprintf('Saving to %s ...', outfile);
     save(outfile,'net','pats','data');
+    fprintf(' done.\n');
 

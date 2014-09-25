@@ -21,7 +21,7 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
     %% Show a similarity matrix movie.
     %load('random_t35_d10_r290_188665419.mat');
     if ~exist('sim_measure', 'var'), sim_measure = 'correlation'; end;
-    
+
     if iscell(net)
         % Received multiple networks; loop over them and average.
         sims = cell(numel(net), 1);
@@ -37,9 +37,9 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
         sim = sims;
         return;
     end;
-    
-    
-    % Set some analysis variables to assist, based on 
+
+
+    % Set some analysis variables to assist, based on
     switch net.sets.init_type
         case 'ringo',       locs = {'input', 'early_cc', 'early_ih', 'late_cc', 'late_ih','output'};
         case 'lewis_elman', locs = {'input', 'cc', 'ih','output'};
@@ -51,7 +51,7 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
         otherwise, pat_types = {};
     end;
 
-    
+
     pat_types = {'all', pat_types{:}};
 
     % Do the forward pass
@@ -61,7 +61,7 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
     sim = representational_similarity_matrix(y, net, pats, locs, sim_measure);
     sim.pat_types = pat_types;
     sim.tsteps = size(y, 1);
-    
+
     % For each timestep and location, compute similarities.
     tsteps = size(y, 1);
     nlocs = length(sim.hemi_locs);
@@ -108,14 +108,14 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
                 switch pat_types{pti}
                     case 'all', idx = 1:npats;
                     otherwise,  idx = pats.idx.(pat_types{pti});
-                end;            
+                end;
                 lower_diag_inpat = ones(npats) - eye(npats);
                 lower_diag_inpat(idx, idx) = lower_diag_inpat(idx, idx) + 1;
                 lower_diag_inpat = double(lower_diag_inpat > 1);
                 pattype_idx = squareform(lower_diag_inpat) > 0;  % logical index
 
                 % Goal here is to evaluate similarity & asymmetry at each
-                % time point. 
+                % time point.
                 %
                 % patsim_hemimean tells very little.
                 % patsim_hemimean_output tells how close to the output the
@@ -132,7 +132,7 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
                 simstats(ti, li, pti, 2) = nanstd (abs(patsim_hemimean_input(pattype_idx)));
                 simstats(ti, li, pti, 3) = nanmean(abs(patsim_hemimean_output(pattype_idx)));
                 simstats(ti, li, pti, 4) = nanstd (abs(patsim_hemimean_output(pattype_idx)));
-                
+
                 simstats(ti, li, pti, 5) = nanmean(abs(patsim_asymmetry(pattype_idx)));
                 simstats(ti, li, pti, 6) = nanstd(abs(patsim_asymmetry(pattype_idx)));
             end;
