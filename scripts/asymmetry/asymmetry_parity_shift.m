@@ -5,7 +5,6 @@ dbstop if error;
 
 net = common_args();
 net.sets.dataset     = 'parity_shift';
-net.sets.nhidden_per = 20; % with two tasks, more hidden units are needed.
 net.sets.dirname     = fullfile(net.sets.dirname, net.sets.dataset);
 
 for ncc = round(linspace(0, net.sets.nhidden_per, 11)) % try 10 different values
