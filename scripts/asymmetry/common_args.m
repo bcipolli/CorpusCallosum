@@ -15,7 +15,7 @@ net.sets.rseed = 290;
 %training parameters
 net.sets.niters          = 1000; %training iterations
 net.sets.online          = false;
-net.sets.ncc             = 5;
+net.sets.ncc             = 2;
 net.sets.cc_wt_lim       = inf*[-1 1];
 net.sets.W_LIM           = inf*[-1 1];
 net.sets.train_criterion = 0.25;

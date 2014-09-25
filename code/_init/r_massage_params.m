@@ -83,6 +83,9 @@ function [net] = r_massage_params(net)
     if (~isfield(sets,'phi_w')),     error('sets.phi_w not set.'); end;      % multiplicative decrease to eta
     if (~isfield(sets,'alpha_w')),   error('sets.alpha_w not set.'); end;      %momentum
 
+    % 
+    guru_assert(sets.ncc <= sets.nhidden_per, 'NCC must not be greater than the # of hidden units per hemisphere.');
+        
 
     %%%%%%%%%%%%%%%%%%%%%%%%%
     % Optional parameters
