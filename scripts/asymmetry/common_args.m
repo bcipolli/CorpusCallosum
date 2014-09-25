@@ -39,8 +39,8 @@ net.sets.D_IH_INIT(2,:,:) = net.sets.D_IH_INIT(1,:,:); %rh;    early->late and l
 net.sets.D_CC_INIT(1,:,:) = 10*[1 1; 1 1];             %early; l->r and r->l
 net.sets.D_CC_INIT(2,:,:) = net.sets.D_CC_INIT(1,:,:); %late;  l->r and r->l
 
-net.sets.eta_w           = 5E-3;    %learning rate (initial)
-net.sets.eta_w_min       = 4E-8;
+net.sets.eta_w           = 5E-2;    %learning rate (initial)
+net.sets.eta_w_min       = 4E-6;
 net.sets.lambda_w        = 1E-2;    % lambda*E to control kappa.
 net.sets.phi_w           = 0.25;      % multiplicative decrease to eta
 net.sets.alpha_w         = 0.1;       %momentum
