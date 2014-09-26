@@ -63,11 +63,25 @@ function r_make_movie_similarity(nets, pats, sims, simstats, xform, figs)
     %% Figure 2: asymmetry in difference from output similarity
     if ismember(2, figs)
         f2h = figure('Position', [ 72         327        1227         446]);
+        prop_cc = nets{1}.sets.ncc / nets{1}.sets.nhidden_per;
+        ih_idx = find(cellfun(@(x) ~isempty(x), regexp('ih$', labels)))
+        cc_idx = find(cellfun(@(x) ~isempty(x), regexp('cc$', labels)))
         for pti=1:npattypes
+            data_mean = squeeze(simstats(:, :, pti, 5));
+            data_std = squeeze(simstats(:, :, pti, 6));
+            cur_labels = labels;
+
+            if length(ih_idx) == 1 && length(cc_idx) == 1
+                data_mean(:, end+1) = data_mean(:, [cc_idx ih_idx]) * [prop_cc; 1-prop_cc];
+                data_std(:, end+1)  = data_std(:, [cc_idx ih_idx])  * [prop_cc; 1-prop_cc];
+                cur_labels = {cur_labels{:} 'ih\_combined'};
+            end;
+
             subplot(1,npattypes,pti);
-            errorbar(repmat(1:tsteps, [nlocs/2 1])', squeeze(simstats(:, :, pti, 5)), squeeze(simstats(:, :, pti, 6))/sqrt(nsims), 'LineWidth', 2);
+            errorbar(repmat(1:tsteps, [size(data_mean, 2) 1])', data_mean, data_std/sqrt(nsims), 'LineWidth', 2);
+            
             set(gca, 'ylim', [0 1.2]);
-            legend(labels);
+            legend(cur_labels);
             title(strrep([title_addendum ' ' pat_types{pti}], '_', '\_'));
             if pti == 1, ylabel('Mean difference between LH and RH similarities.'); end;
             xlabel('time step');
