@@ -1,4 +1,4 @@
-function [data] = r_analyze_shift(net,pats,data)
+function [data] = r_analyze_parity(net, pats, data)
 %
 
-    return
+    [data.sim, data.simstats] = r_compute_similarity(net, pats);
