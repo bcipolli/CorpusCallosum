@@ -1,3 +1,5 @@
+% Script to test when LH and RH have one task each that differs.
+
 clear globals variables;
 addpath(genpath('code'));
 dbstop if error;
@@ -7,9 +9,5 @@ net = common_args();
 net.sets.dataset     = 'parity_shift';
 net.sets.dirname     = fullfile(net.sets.dirname, net.sets.dataset);
 
-for ncc = round(linspace(0, net.sets.nhidden_per, 11)) % try 10 different values
-    net.sets.ncc = ncc;
-    [nets, pats, datas] = r_looper(net, 10); % run 25 network instances
-    [abc, def] = r_compute_similarity(nets, pats);
-    r_make_movie_similarity(nets, pats, abc, def, '', [2])
-end;
+ncc = round(linspace(0, net.sets.nhidden_per, 11)); % try 10 different values
+asymmetry_looper(net, 10, ncc);
