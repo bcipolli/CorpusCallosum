@@ -3,13 +3,13 @@ function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_parity_dual(sets, 
 
     if ~exist('opt','var'), opt = ''; end;
 
-    inpats = [1:(2^10)] - 1;
+    inpats = randi([1 2^10] - 1, [32 1]);
     inpats = dec2bin(inpats) - '0'; % convert to binary
     outpats = mod(sum(inpats, 2), 2); % is the number of bits odd?
     outpats = [outpats 1-outpats outpats 1-outpats outpats]; %repmat(outpats, [1 5]); % duplicate 5 times
 
     % Split into input/output, revalue to -1 1
-    in_pats  = -1+2*[inpats inpats];  % left and right symmetry
+    in_pats  = -1+2*inpats;  % left and right symmetry
     out_pats = -1+2*[outpats outpats]; % left and right symmetry
 
     % Label patterns

@@ -35,6 +35,11 @@ function [net, pats, data] = r_dummy(sets, rseed)
     if exist(matfile, 'file')
         fprintf('Skipping %s\n', matfile);
         load(matfile);
+        if false && (~isfield(data, 'an') || ~isfield(data.an, 'sim'))
+keyboard
+            [data.an] = r_analyze(net, pats, data);
+            save(matfile, 'net', 'pats', 'data');
+        end;
         return;
     end; % don't re-run
 
