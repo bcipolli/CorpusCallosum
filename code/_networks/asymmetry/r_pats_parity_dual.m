@@ -3,8 +3,19 @@ function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_parity_dual(sets, 
 
     if ~exist('opt','var'), opt = ''; end;
 
-    inpats = randi([1 2^10] - 1, [32 1]);
-    inpats = dec2bin(inpats) - '0'; % convert to binary
+    npats = 32;
+    
+    all_pats = double(dec2bin([1:2^5] - 1) - '0');
+    all_pats = all_pats(randperm(size(all_pats, 1)), :);  % shuffle rows
+    nbits = sum(all_pats, 2)';
+    
+    even_num_bits = find(mod(nbits, 2) == 0, npats/4)';
+    odd_num_bits  = find(mod(nbits, 2) == 1, npats/4)';
+    
+    inpats = [ all_pats(even_num_bits,:) all_pats(even_num_bits,:)
+               all_pats(even_num_bits,:) all_pats(odd_num_bits,:)
+               all_pats(odd_num_bits,:)  all_pats(even_num_bits,:)
+               all_pats(odd_num_bits,:)  all_pats(odd_num_bits,:) ];
     outpats = mod(sum(inpats, 2), 2); % is the number of bits odd?
     outpats = [outpats 1-outpats outpats 1-outpats outpats]; %repmat(outpats, [1 5]); % duplicate 5 times
 
