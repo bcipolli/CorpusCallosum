@@ -5,6 +5,8 @@ function [nets, pats, datas, figs] = asymmetry_looper(net, nexamples, nccs, dela
     if ~exist('delays', 'var'), delays = unique(net.sets.D_CC_INIT); end;
     if ~exist('Ts', 'var'), Ts = unique(net.sets.T_INIT) / net.sets.dt; end;
     if ~exist('loop_figs', 'var'), loop_figs = []; end;
+    if ~exist('summary_figs', 'var'), summary_figs = [1 2]; end;
+    
 
     nets = cell(length(nccs), length(delays), length(Ts)); 
     datas = cell(size(nets));
@@ -54,3 +56,7 @@ function [nets, pats, datas, figs] = asymmetry_looper(net, nexamples, nccs, dela
             r_analyze_similarity(nets{ni, di, ti}, sims{ni, di, ti}, simstats{ni, di, ti}, loop_figs);
         end;
     end; end; end;
+
+    if ~isempty(summary_figs)
+        r_analyze_similarity_surfaces(nets, sims, simstats, summary_figs);
+    end;
