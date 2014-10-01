@@ -36,7 +36,7 @@ function [net, pats, data] = r_dummy(sets, rseed)
         fprintf('Skipping %s\n', matfile);
         load(matfile);
         if false && (~isfield(data, 'an') || ~isfield(data.an, 'sim'))
-keyboard
+            keyboard
             [data.an] = r_analyze(net, pats, data);
             save(matfile, 'net', 'pats', 'data');
         end;
@@ -45,12 +45,11 @@ keyboard
 
     %
     if ~exist(net.sets.dirname,'dir'), mkdir(net.sets.dirname); end;
-
-    %try
-     [net,pats,data]          = r_main(net);
-     [data.an]                = r_analyze(net, pats, data);
-     %unix(['mv ' net.sets.matfile ' ./' net.sets.dirname]);
-   %catch err
-   %  fprintf('Error: %s\nCall stack:\n', err.message);
-   %  fprintf('\t%s\n', err.stack.file)
-   %end;
+    [net,pats,data,ex]          = r_main(net, [], [], guru_getfield(net.sets, 'debug', false));  % handle exeption
+    if isempty(ex)
+        [data.an]                = r_analyze(net, pats, data);
+        %unix(['mv ' net.sets.matfile ' ./' net.sets.dirname]);
+    else
+        fprintf('Error: %s\nCall stack:\n', ex.message);
+        fprintf('\t%s\n', ex.stack.file);
+    end;
