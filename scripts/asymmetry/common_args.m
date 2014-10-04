@@ -57,7 +57,7 @@ net.sets.noise_init       = 0;%.001;%1;
 net.sets.noise_input      = 0;%1E-6;%.001;%001;%1;
 
 net.sets.dirname          = fullfile(guru_getOutPath('cache'), 'ringo', 'asymmetry');
-net.sets.test_freq        = 10;
+net.sets.test_freq        = 25; %10
 
 net.sets.continue         = false;
 net.sets.run              = true;
