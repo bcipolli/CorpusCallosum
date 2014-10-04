@@ -6,15 +6,15 @@ function [nets, pats, datas, figs] = asymmetry_looper(net, nexamples, nccs, dela
     if ~exist('Ts', 'var'), Ts = unique(net.sets.T_INIT) / net.sets.dt; end;
     if ~exist('loop_figs', 'var'), loop_figs = []; end;
     if ~exist('summary_figs', 'var'), summary_figs = [1 2]; end;
-    
 
-    nets = cell(length(nccs), length(delays), length(Ts)); 
+
+    nets = cell(length(nccs), length(delays), length(Ts));
     datas = cell(size(nets));
     sims = cell(size(nets));
     simstats = cell(size(nets));
 
     rseed = net.sets.rseed;
-    
+
     for mi=1:nexamples, for ni = 1:length(nccs), for di=1:length(delays), for ti=1:length(Ts)
         if mi==1
             nets{ni, di, ti} = cell(nexamples, 1);
@@ -26,31 +26,32 @@ function [nets, pats, datas, figs] = asymmetry_looper(net, nexamples, nccs, dela
         net.sets.D_CC_INIT(:) = delays(di);
         net.sets.T_INIT(:) = Ts(ti) * net.sets.dt;
         net.sets.T_LIM(:) = Ts(ti) * net.sets.dt;
-        net.sets.rseed = net.sets.rseed + (mi-1);
-        
+        net.sets.rseed = rseed + (mi-1);
+        net.sets = guru_rmfield(net.sets, {'D_LIM', 'matfile'});
+
         % Train the network
         [nets{ni, di, ti}{mi}, pats, datas{ni, di, ti}{mi}] = r_looper(net, 1); % run 25 network instances
+        nets{ni, di, ti}{mi} = nets{ni, di, ti}{mi}{1};
+        datas{ni, di, ti}{mi} = datas{ni, di, ti}{mi}{1};
 
         % Gather any missing data
+        if ~isfield(datas{ni, di, ti}{mi}, 'an') || ~isfield(datas{ni, di, ti}{mi}.an, 'sim')
+            net = nets{ni, di, ti}{mi};
+            data = datas{ni, di, ti}{mi};
+
+            % Will propagate data to cell array.
+            fprintf('Computing similarity...')
+            [data.an.sim, data.an.simstats] = r_compute_similarity(net, pats);
+            datas{ni, di, ti}{mi} = data;
+
+            % Hack to make things work A LOT FASTER
+            outfile = fullfile(net.sets.dirname, net.sets.matfile);
+            fprintf(' re-saving to %s ...', outfile);
+            save(outfile,'net','pats','data');
+            fprintf(' done.\n');
+        end;
+
         if mi==nexamples
-            for xi=1:length(datas{ni, di, ti})
-                if ~isfield(datas{ni, di, ti}{xi}, 'an') || ~isfield(datas{ni, di, ti}{xi}.an, 'sim')
-                    net = nets{ni, di, ti}{xi};
-                    data = datas{ni, di, ti}{xi};
-
-                    % Will propagate data to cell array.
-                    fprintf('Computing similarity...')
-                    [data.an.sim, data.an.simstats] = r_compute_similarity(net, pats);
-                    datas{ni, di, ti}{xi} = data;
-
-                    % Hack to make things work A LOT FASTER
-                    outfile = fullfile(net.sets.dirname, net.sets.matfile);
-                    fprintf(' re-saving to %s ...', outfile);
-                    save(outfile,'net','pats','data');
-                    fprintf(' done.\n');
-                end;
-            end;
-
             % Combine the results
             %anz      = cellfun(@(obj) guru_getfield(obj, 'an', struct()), datas{ni, di, ti}, 'UniformOutput', false);
             anz                  = cellfun(@(d) d.an, datas{ni, di, ti}, 'UniformOutput', false);
@@ -69,3 +70,5 @@ function [nets, pats, datas, figs] = asymmetry_looper(net, nexamples, nccs, dela
     if ~isempty(summary_figs)
         r_analyze_similarity_surfaces(nets, sims, simstats, summary_figs);
     end;
+
+    guru_saveall_plots();
