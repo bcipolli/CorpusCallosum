@@ -17,6 +17,9 @@ net.sets.lambda_w = 3E-4;
 net.sets.batch_size = 32;
 net.sets.niters = 2500;
 
-ncc = net.sets.nhidden_per/2;%;%round(linspace(2, net.sets.nhidden_per, 11)); % try 11 different values
+ncc = round(linspace(0, net.sets.nhidden_per, 6));
 delays = [1 5 10 15 20];
-asymmetry_looper(net, 10, ncc, delays);
+
+% Sample along ncc and delays independently
+asymmetry_looper(net, 10, ncc,              delays(ceil(end/2)));
+asymmetry_looper(net, 10, ncc(ceil(end/2)), delays);

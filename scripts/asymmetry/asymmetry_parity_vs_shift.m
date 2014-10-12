@@ -1,16 +1,22 @@
-clear globals variables;
-addpath(genpath('code'));
-dbstop if error;
-%dbstop if warning;
+% Each hemisphere gets the same inputs, but performs a different task.
+% Each hemisphere learns both tasks.
+%
+% So, this is like asymmetry_parity_shift, but both sides learn both tasks, and know what to expect from the other.
+%
+% A good comparison is to asymmetry_parity_or_shift (where each learns one task without knowing what the other side will do)
+%   and asymmetry_parity_shift (where the same relationship holds here, but each hemi learns just one task)
 
 net = common_args();
-net.sets.dataset     = 'parity_vs_shift';
+net.sets.dataset = 'parity_vs_shift';
 net.sets.nhidden_per = 20; % with two tasks, more hidden units are needed.
-net.sets.dirname     = fullfile(net.sets.dirname, net.sets.dataset);
+net.sets.dirname = fullfile(net.sets.dirname, net.sets.dataset);
+net.sets.eta_w = 0.002;
+net.sets.phi_w = 0.25;
+net.sets.lambda_w = 1E-3;
 
-for ncc = round(linspace(0, net.sets.nhidden_per, 11)) % try 10 different values
-    net.sets.ncc = ncc;
-    [nets, pats, datas] = r_looper(net, 10); % run 25 network instances
-    [abc, def] = r_compute_similarity(nets, pats);
-    r_make_movie_similarity(nets, pats, abc, def, '', [2])
-end;
+ncc = round(linspace(0, net.sets.nhidden_per, 6));
+delays = [1 5 10 15 20];
+
+% Sample along ncc and delays independently
+asymmetry_looper(net, 10, ncc,              delays(ceil(end/2)));
+asymmetry_looper(net, 10, ncc(ceil(end/2)), delays);
