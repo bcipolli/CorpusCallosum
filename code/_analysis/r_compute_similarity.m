@@ -105,6 +105,10 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
                 patsim_asymmetry_input  = (rh_simdiff_input - lh_simdiff_input);% ./ patsim_hemimean;
                 patsim_asymmetry_output = (rh_simdiff_output - lh_simdiff_output);% ./ patsim_hemimean;
 
+                patsim_asymmetry_corr   = corr(rh_sim', lh_sim'); %
+                patsim_asymmetry_input_corr  = corr(rh_simdiff_input', lh_simdiff_input');% ./ patsim_hemimean;
+                patsim_asymmetry_output_corr = corr(rh_simdiff_output', lh_simdiff_output');% ./ patsim_hemimean;
+
                 switch pat_types{pti}
                     case 'all', idx = 1:npats;
                     otherwise,  idx = pats.idx.(pat_types{pti});
@@ -135,6 +139,11 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
 
                 simstats(ti, li, pti, 5) = nanmean(abs(patsim_asymmetry(pattype_idx)));
                 simstats(ti, li, pti, 6) = nanstd(abs(patsim_asymmetry(pattype_idx)));
+
+                % corr is a measure of similarity; we want dissimilarity.  Keep the sign to indicate anti-correlation
+                simstats(ti, li, pti, 7) = sign(patsim_asymmetry_input_corr)  * (1-abs(patsim_asymmetry_input_corr)); %
+                simstats(ti, li, pti, 8) = sign(patsim_asymmetry_output_corr) * (1-abs(patsim_asymmetry_output_corr)); %
+                simstats(ti, li, pti, 9) = sign(patsim_asymmetry_corr)        * (1-abs(patsim_asymmetry_corr)); %
             end;
         end;
     end;
