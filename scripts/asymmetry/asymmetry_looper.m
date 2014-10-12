@@ -37,7 +37,7 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
         datas{ni, di, ti}{mi} = datas{ni, di, ti}{mi}{1};
 
         % Gather any missing data
-        if true || ~isfield(datas{ni, di, ti}{mi}, 'an') || ~isfield(datas{ni, di, ti}{mi}.an, 'sim')
+        if false || ~isfield(datas{ni, di, ti}{mi}, 'an') || ~isfield(datas{ni, di, ti}{mi}.an, 'sim')
             net = nets{ni, di, ti}{mi};
             data = datas{ni, di, ti}{mi};
 
@@ -75,4 +75,4 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
 
     abc = dbstack;
     script_name = abc(end).name;
-    guru_saveall_figures(script_name, {'png', 'fig'});
+    guru_saveall_figures(script_name, {'png'}, false, pwd(), true);
