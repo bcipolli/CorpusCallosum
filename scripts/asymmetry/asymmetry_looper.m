@@ -37,7 +37,7 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
         datas{ni, di, ti}{mi} = datas{ni, di, ti}{mi}{1};
 
         % Gather any missing data
-        if false || ~isfield(datas{ni, di, ti}{mi}, 'an') || ~isfield(datas{ni, di, ti}{mi}.an, 'sim')
+        if false || ~isfield(datas{ni, di, ti}{mi}, 'an') || ~isfield(datas{ni, di, ti}{mi}.an, 'sim') || size(datas{ni, di, ti}{mi}.an.simstats, 4) ~= 9
             net = nets{ni, di, ti}{mi};
             data = datas{ni, di, ti}{mi};
 
@@ -58,11 +58,14 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
             %anz      = cellfun(@(obj) guru_getfield(obj, 'an', struct()), datas{ni, di, ti}, 'UniformOutput', false);
             anz                  = cellfun(@(d) d.an, datas{ni, di, ti}, 'UniformOutput', false);
             sims{ni, di, ti}     = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
-            simstats{ni, di, ti} = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
-            simstats{ni, di, ti} = mean(cat(5, simstats{ni, di, ti}{:}), 5);
+            simstats_tmp = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
+            simstats{ni, di, ti} = mean(cat(5, simstats_tmp{:}), 5);
             clear('anz');
 
-            % Plot results
+            % Report some results
+            r_analyze_training(nets{ni, di, ti}, datas{ni, di, ti});
+
+            % Plot other results
             if ~isempty(loop_figs)
                 r_analyze_similarity(nets{ni, di, ti}, sims{ni, di, ti}, simstats{ni, di, ti}, loop_figs);
             end;
@@ -74,5 +77,11 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
     end;
 
     abc = dbstack;
+    dir_name = 'results';
     script_name = abc(end).name;
-    guru_saveall_figures(script_name, {'png'}, false, pwd(), true);
+    guru_saveall_figures(fullfile(dir_name, script_name), {'png'}, false, true);
+
+
+function r_analyze_training(nets, datas)
+    niters = cellfun(@(d) guru_getfield(d, 'niters', NaN), datas);
+    fprintf('Training iters (%2d del, %2d ncc): %.1f +/- %.1f\n', max(nets{1}.sets.D_CC_INIT(:)),nets{1}.sets.ncc, nanmean(niters), nanstd(niters));
