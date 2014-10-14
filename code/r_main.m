@@ -22,9 +22,9 @@ function [net,pats,data, ex] = r_main(net,pats,data,handle_exception)
         end;
 
         % Train the network
-        fprintf('Training [autoencoder=%d] network with tsteps=%d, max_del=%d, to tc=%4.2f\n', ...
+        fprintf('Training [autoencoder=%d] network with tsteps=%d, max_del=%d, ncc=%d, to tc=%4.2f\n', ...
                  (isfield(net.sets, 'autoencoder') && net.sets.autoencoder), ...
-                 net.sets.tsteps, max(net.sets.D_CC_INIT(:)), net.sets.train_criterion);
+                 net.sets.tsteps, max(net.sets.D_CC_INIT(:)), net.sets.ncc, net.sets.train_criterion);
 
         if isempty(data)
           [net,data] = net.fn.train(net,pats.train);
