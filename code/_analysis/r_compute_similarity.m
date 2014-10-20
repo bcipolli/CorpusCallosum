@@ -18,8 +18,6 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
 
     warning('off', 'stats:pdist:constantPoints');
 
-    %% Show a similarity matrix movie.
-    %load('random_t35_d10_r290_188665419.mat');
     if ~exist('sim_measure', 'var'), sim_measure = 'correlation'; end;
 
     if iscell(net)
@@ -41,8 +39,8 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
 
     % Set some analysis variables to assist, based on
     switch net.sets.init_type
-        case 'ringo',       locs = {'input', 'early_cc', 'early_ih', 'late_cc', 'late_ih','output'};
-        case 'lewis_elman', locs = {'input', 'cc', 'ih','output'};
+        case 'ringo',       locs = {'input', 'early_cc', 'early_ih', 'early_hu','late_cc', 'late_ih','late_hu','output'};
+        case 'lewis_elman', locs = {'input', 'cc', 'ih','hu','output'};
         otherwise, error('Unknown init_type: ''%s''', net.sets.init_type);
     end;
 
@@ -98,6 +96,9 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
                 rh_simdiff_output = rh_sim - sim.rh_out;  % how close is the similarity to the output?
                 lh_simdiff_output = lh_sim - sim.lh_out;
 
+                guru_assert(~any(isnan(rh_sim)) || all(isnan(rh_sim)));
+                guru_assert(~any(isnan(lh_sim)) || all(isnan(lh_sim)));
+
                 patsim_hemimean         = ( rh_sim + lh_sim ) / 2;
                 patsim_hemimean_input   = ( rh_simdiff_input + lh_simdiff_input ) / 2;
                 patsim_hemimean_output  = ( rh_simdiff_output + lh_simdiff_output ) / 2;
@@ -108,6 +109,15 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
                 patsim_asymmetry_corr   = corr(rh_sim', lh_sim'); %
                 patsim_asymmetry_input_corr  = corr(rh_simdiff_input', lh_simdiff_input');% ./ patsim_hemimean;
                 patsim_asymmetry_output_corr = corr(rh_simdiff_output', lh_simdiff_output');% ./ patsim_hemimean;
+
+                measurements = [1-patsim_asymmetry_corr mean(abs(patsim_asymmetry))];
+                diff_sign = diff(sign(measurements)) ~= 0 && abs(diff(measurements)) > 0.1;
+                diff_mag = abs(diff(measurements)) > 0.25;
+
+                if ~all(isnan(patsim_asymmetry)) && ~isnan(patsim_asymmetry_corr) && (diff_sign || diff_mag)
+                    %fprintf('\n%2d: %s corr & avg differ %.2f vs %.2f\n', ti, loc, (1-patsim_asymmetry_corr), mean(abs(patsim_asymmetry)));
+                    %keyboard;
+                end;
 
                 switch pat_types{pti}
                     case 'all', idx = 1:npats;

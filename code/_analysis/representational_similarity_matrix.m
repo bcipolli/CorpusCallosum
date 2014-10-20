@@ -1,9 +1,9 @@
 function sim = representational_similarity_matrix(y, net, pats, locs, ptype)
 %
 % y : activations, in [time] X [patterns] X [units]
-% net : 
+% net :
 % pats :
-% locs : 
+% locs :
 % ptype : pdist type (correlation, euclidean, etc)
 %
 %
@@ -37,7 +37,7 @@ function sim = representational_similarity_matrix(y, net, pats, locs, ptype)
     % Output similarity
     sim.rh_out = pdist(rh_out, ptype);
     sim.lh_out = pdist(lh_out, ptype);
-        
+
     sim.hemi_locs = {};
     for hemi = {'rh', 'lh'}, for loc=locs
         sim.hemi_locs{end+1} = [hemi{1} '_' loc{1}];
@@ -49,10 +49,12 @@ function sim = representational_similarity_matrix(y, net, pats, locs, ptype)
         for loc = sim.hemi_locs
             loc = loc{1};
             hemi = loc(1:2);
-            
+
             % Inter-pattern similarity
             if isfield(net.idx, loc) && ~isempty(net.idx.(loc))
                 sim.(loc)(ti).patsim = pdist(activations(:, net.idx.(loc)), ptype);
+                %non_nan_vals = sim.(loc)(ti).patsim(~isnan(sim.(loc)(ti).patsim));
+                %guru_assert(~strcmp(ptype, 'correlation') || all(abs(sim.(loc)(ti).patsim(~isnan(sim.(loc)(ti).patsim))) <= 1));
 
                 % Input similarity
                 sim.(loc)(ti).([hemi '_in'])  = sim.(loc)(ti).patsim - sim.([hemi '_in']); %rh_in; %repmat(sim.rh_in, [size(sim.rh_in, 1) 1]);
@@ -64,6 +66,6 @@ function sim = representational_similarity_matrix(y, net, pats, locs, ptype)
                 sim.(loc)(ti).([hemi '_in']) = [];
                 sim.(loc)(ti).([hemi '_out']) = [];
             end;
-            
+
         end;
     end;
