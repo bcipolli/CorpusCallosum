@@ -129,14 +129,14 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
                     axon_noise = axon_noise .* repmat(squeeze(y(ti,:,:)), [1 1 size(net.w,2)]);
                 end;
 
-                if iter==25 && ti==10  % Report on the noise level
+                if iter==25 && ti==10 && numel(net.idx.cc) > 0 % Report on the noise level
                     cc_act = squeeze(y(ti,:,net.idx.cc));
                     avg_cc_act = sum(abs(cc_act(:))) / nnz(cc_act);
                     std_cc_act = mean(std(cc_act));
                     cc_axon_noise = axon_noise(:,:,net.idx.cc);
                     avg_axon_noise = sum(abs(cc_axon_noise(:))) / nnz(cc_axon_noise);%pats.npat / length(net.idx.cc);
                     fprintf('Average noise per pattern per synapse: %.2e = %.2f%% of mean, %.2f%% variance of cc activation\n', avg_axon_noise, 100 * avg_axon_noise / avg_cc_act, 100 * avg_axon_noise / std_cc_act);
-                    keyboard;
+                    %keyboard;
                 end;
 
                 x(ti,:,:)   = sum(w_repd .* (y_d + axon_noise), 2);  % finally add in the noise
@@ -308,8 +308,14 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
         dw(:) = sum(sum(gradE_w,2),1); %sum over patterns and time
         dT(:) = squeeze(sum(sum(gradE_T,2),1));
         dD(:) = squeeze(sum(sum(gradE_D,2),1));
-        ;
+
         dw = dw.*net.wC; dD = dD.*net.DC; dT = dT.*net.TC;
+        if any(isinf(dw(:))), error('dw is inf???'); end;
+        if any(isnan(dw(:))), error('dw is nan???'); end;
+        if any(isnan(dT(:))), error('dT is nan???'); end;
+        if any(isnan(dD(:))), error('dD is nan???'); end;
+
+
 
         % Calculate for delta-bar - delta rule
         v_w   = dwr.*dw; v_T   = dTr.*dT; v_D   = dDr.*dD;
@@ -357,9 +363,9 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
             fprintf(' *** ');
 
             % Roll back parameter changes
-            net.w = wm1; ns.eta_w = ns.eta_wm1/2; %binary search
-            net.T = Tm1; ns.eta_T = ns.eta_Tm1/2;
-            net.D = Dm1; ns.eta_D = ns.eta_Dm1/2;
+            net.w = wm1; ns.eta_w = ns.eta_wm1;%/2; %binary search
+            net.T = Tm1; ns.eta_T = ns.eta_Tm1;%/2;
+            net.D = Dm1; ns.eta_D = ns.eta_Dm1;%/2;
 
             % Roll back advancing frame of parameter change history
             dw     = dwr;      dT     = dTr;      dD     = dDr;
@@ -394,6 +400,7 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
             giters = giters(2:end);
 
             % now, re-try an update with these scaled-back params
+            continue;
         end; % if ~good_iter
 
         wm1 = net.w; ns.eta_wm1 = ns.eta_w;
