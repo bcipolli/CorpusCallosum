@@ -1,13 +1,8 @@
-% Script to test when each hemisphere is executing parity or shift (irrespective of what the other is doing)
+% LH learns parity, RH learns shift.  Both get the same inputs.
+%
 
-clear globals variables;
-addpath(genpath('code'));
-dbstop if error;
-%dbstop if warning;
-
-net = common_args();
-net.sets.dataset     = 'parity_or_shift';
-net.sets.nhidden_per = 40; % with two tasks, more hidden units are needed.
+net = lewis_elman_common_args();
+net.sets.dataset     = 'parity_shift';
 net.sets.dirname     = fullfile(net.sets.dirname, net.sets.dataset);
 net.sets.eta_w = 0.002;
 net.sets.phi_w = 0.25;

@@ -1,12 +1,7 @@
-% Script to test a shared task between the hemispheres across many delays.
+% Script to test the shift task between the hemispheres, across the full matrix of delays x ncc.
+%
 
-clear globals variables;
-close all;
-addpath(genpath('code'));
-dbstop if error;
-%dbstop if warning;
-
-net = common_args();
+net = lewis_elman_common_args();
 net.sets.dataset = 'parity';
 net.sets.dirname = fullfile(net.sets.dirname, net.sets.dataset);
 net.sets.eta_w = 0.005;
@@ -20,7 +15,6 @@ asymmetry_looper(net, 10, ncc, delays);
 % Draw plots for ncc
 for di=1:length(delays)
     asymmetry_looper(net, 10, ncc, delays(di));
-    keyboard
 end;
 
 for ni=1:length(ncc)

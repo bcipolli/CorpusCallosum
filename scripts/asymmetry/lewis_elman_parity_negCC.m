@@ -1,13 +1,7 @@
 % Script for testing a single task (parity) that the hemispheres do in
-% parallel.
+% parallel, with negative-only callosal connections.
 
-clear globals variables;
-close all;
-addpath(genpath('code'));
-dbstop if error;
-%dbstop if warning;
-
-net = common_args();
+net = lewis_elman_common_args();
 net.sets.dataset = 'parity';
 net.sets.dirname = fullfile(net.sets.dirname, net.sets.dataset);
 %net.sets.train_criterion = 0.25;

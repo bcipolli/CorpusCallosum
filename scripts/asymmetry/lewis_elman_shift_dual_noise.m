@@ -1,14 +1,10 @@
-% Script for testing a single task (parity) that the hemispheres do in
-% parallel.
+% Script for testing a single task (shift), where the output for each hemisphere
+% depends on the input from BOTH hemispheres.  Each hemisphere outputs the input of the other.
+%
+% Do this with noise on the callosal connections.
 
-clear globals variables;
-close all;
-addpath(genpath('code'));
-dbstop if error;
-%dbstop if warning;
-
-net = common_args();
-net.sets.dataset = 'parity_dual';
+net = lewis_elman_common_args();
+net.sets.dataset = 'shift_dual';
 net.sets.dirname = fullfile(net.sets.dirname, net.sets.dataset);
 net.sets.train_criterion = 0.50;
 net.sets.eta_w = 0.02;

@@ -1,11 +1,7 @@
 % Script to test when LH and RH always do the same task--parity sometimes, shift other times.
+%
 
-clear globals variables;
-addpath(genpath('code'));
-dbstop if error;
-%dbstop if warning;
-
-net = common_args();
+net = lewis_elman_common_args();
 net.sets.dataset     = 'parity_and_shift';
 net.sets.dirname     = fullfile(net.sets.dirname, net.sets.dataset);
 

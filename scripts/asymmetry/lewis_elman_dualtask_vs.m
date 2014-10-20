@@ -6,7 +6,7 @@
 % A good comparison is to asymmetry_parity_or_shift (where each learns one task without knowing what the other side will do)
 %   and asymmetry_parity_shift (where the same relationship holds here, but each hemi learns just one task)
 
-net = common_args();
+net = lewis_elman_common_args();
 net.sets.dataset = 'parity_vs_shift';
 net.sets.nhidden_per = 20; % with two tasks, more hidden units are needed.
 net.sets.dirname = fullfile(net.sets.dirname, net.sets.dataset);
