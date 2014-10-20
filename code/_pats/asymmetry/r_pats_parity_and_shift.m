@@ -11,6 +11,7 @@ function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_parity_and_shift(s
                s_in_pats(:, 1:end/2)  1*ones(s_npats, 1) s_in_pats(:, (1+end/2):end)  1*ones(s_npats, 1) ];
 
     out_pats = [p_out_pats; s_out_pats];
+
     pat_cls  = [p_pat_cls; s_pat_cls];
     pat_lbls = {p_pat_lbls{:}; s_pat_lbls{:}}';
     idx      = []; % use default symmetric labeling

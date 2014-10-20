@@ -9,8 +9,8 @@ function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_parity(sets, opt)
     outpats = [outpats 1-outpats outpats 1-outpats outpats]; %repmat(outpats, [1 5]); % duplicate 5 times
 
     % Split into input/output, revalue to -1 1
-    in_pats  = -1+2*[inpats inpats];  % left and right symmetry
-    out_pats = -1+2*[outpats outpats]; % left and right symmetry
+    in_pats  = -1+2*[inpats inpats];  % same RH and LH inputs
+    out_pats = -1+2*[outpats outpats]; % same RH and LH outputs
 
     % Label patterns
     pat_lbls = cellfun(@(a,b) sprintf('%d => %d', a, b), num2cell(bin2dec(char(inpats + '0'))), num2cell(bin2dec(char(outpats(:,1) + '0'))), 'UniformOutput', false);
