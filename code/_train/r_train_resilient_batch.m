@@ -171,7 +171,7 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
         end;
 
         % Save some stats
-        data.E_pat(iter,:,:)      = ns.dt*sum(E(iter,:,:,:),3); % E took net.s into account already
+        data.E_pat(iter,:,:)      = ns.dt*sum(E(iter,:,:,:),3);  % Error summed across all MEASUREMENT timesteps (took net.s into account already)
         data.hu_pat(iter,:,:)     = y(last_measure_ts,:,net.idx.hidden);
         data.learncurve(iter,:,:) = y(last_measure_ts,:,outidx);
         data.actcurve             = y(:,:,[outidx]);
