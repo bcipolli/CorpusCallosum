@@ -7,11 +7,13 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
     if ~exist('loop_figs', 'var'), loop_figs = []; end;
     if ~exist('summary_figs', 'var'), summary_figs = [1 2]; end;
 
+    if ~exist('results', 'dir'), mkdir('results'); end;
 
     nets = cell(length(nccs), length(delays), length(Ts));
     datas = cell(size(nets));
     sims = cell(size(nets));
     simstats = cell(size(nets));
+    niters = cell(size(nets));
 
     rseed = template_net.sets.rseed;
 
@@ -55,24 +57,20 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
 
         if mi==nexamples
             % Combine the results
-            %anz      = cellfun(@(obj) guru_getfield(obj, 'an', struct()), datas{ni, di, ti}, 'UniformOutput', false);
-            anz                  = cellfun(@(d) d.an, datas{ni, di, ti}, 'UniformOutput', false);
-            sims{ni, di, ti}     = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
-            simstats_tmp = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
-            simstats{ni, di, ti} = mean(cat(5, simstats_tmp{:}), 5);
-            clear('anz');
+            [sims{ni, di, ti}, simstats{ni, di, ti}, niters{ni, di, ti}, good_idx] = r_analyze(nets{ni, di, ti}{1}.sets, datas{ni, di, ti});
+
+            % Filter the results to only good results
+            nets{ni, di, ti} = nets{ni, di, ti}(good_idx);
+            datas{ni, di, ti} = datas{ni, di, ti}(good_idx);
 
             % Report some results
-            r_analyze_training(nets{ni, di, ti}, datas{ni, di, ti});
+            r_analyze_similarity(nets{ni, di, ti}, sims{ni, di, ti}, simstats{ni, di, ti}, loop_figs);
 
-            % Plot other results
-            if ~isempty(loop_figs)
-                r_analyze_similarity(nets{ni, di, ti}, sims{ni, di, ti}, simstats{ni, di, ti}, loop_figs);
-            end;
         end;
     end; end; end; end;
 
     if ~isempty(summary_figs)
+        r_plot_niters(nets, sims, niters);
         r_analyze_similarity_surfaces(nets, sims, simstats, summary_figs);
     end;
 
@@ -82,6 +80,57 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
     guru_saveall_figures(fullfile(dir_name, script_name), {'png'}, false, true);
 
 
-function r_analyze_training(nets, datas)
-    niters = cellfun(@(d) guru_getfield(d, 'niters', NaN), datas);
+function [sims, simstats, niters, good_idx] = r_analyze(sets, datas)
+    good_idx     = cellfun(@(d) all(all(squeeze(abs(abs(d.actcurve(end,:,:))-1)) <= sets.train_criterion)), datas);
+
+    anz          = cellfun(@(d) d.an, datas(good_idx), 'UniformOutput', false);
+    sims         = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
+    simstats_tmp = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
+    simstats     = mean(cat(5, simstats_tmp{:}), 5);
+
+    niters       = cellfun(@(d) guru_getfield(d, 'niters', NaN), datas(good_idx));
+
+
+function r_report_training(nets, niters)
     fprintf('Training iters (%2d del, %2d ncc): %.1f +/- %.1f\n', max(nets{1}.sets.D_CC_INIT(:)),nets{1}.sets.ncc, nanmean(niters), nanstd(niters));
+
+
+function r_plot_niters(nets, sims, niters)
+    vals = r_compute_common_vals(nets, sims);
+
+    dims = {'delays', 'ncc'};
+    dim_idx = cellfun( @(dim) length(vals.(dim)) > 1, dims);%, []), , 'UniformOutput', false );
+
+    % Number of iterations
+    switch sum(dim_idx) % # non-singular values (i.e. was iterated)
+        case 1
+            dim = dims{dim_idx};
+            figure;
+            errorbar(vals.(dim), cellfun(@(n) nanmean(n), niters), cellfun(@(n) nanstd(n), niters));
+            xlabel(dim); ylabel('# iterations');
+        case 2
+            figure;
+            surf(vals.delays, vals.ncc, cellfun(@(n) nanmean(n), niters));
+
+        case 0, ;
+        otherwise, error('NYI');
+    end;
+    title('# iterations.');
+
+    % Number of trained models
+    max_iters = nets{1}{1}.sets.niters;
+    switch sum(dim_idx) % # non-singular values (i.e. was iterated)
+        case 1
+            dim = dims{dim_idx};
+            figure;
+            bar(vals.(dim), cellfun(@(n) 100*mean(n<max_iters), niters));
+            xlabel(dim); ylabel('% models');
+        case 2
+            figure;
+            surf(vals.delays, vals.ncc, cellfun(@(n) 100*mean(n<max_iters), niters));
+
+        case 0, ;
+        otherwise, error('NYI');
+    end;
+    title('# models trained.');
+

@@ -2,6 +2,7 @@ function r_analyze_similarity(nets, sim, simstats, figs)
 
 
     if ~iscell(nets), nets = { nets }; end;
+    if isempty(sim), return; end;
     if iscell(sim),   sim  = sim{1}; end;
     if ~exist('xform', 'var'), xform = ''; end;
     if ~exist('figs', 'var'), figs = [1:3]; end;

@@ -9,29 +9,11 @@ function r_analyze_similarity_surfaces(nets, sims, simstats, figs)
     ndims_looped = sum(dims_looped);
 
     switch ndims_looped
+        case 0, warning('No valid networks were trained, so no plots can be made.'); return;
         case 1, r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dims{dims_looped}, 9); % 5=mean, 9=corr
         case 2, fprintf('2D looping movie NYI\n');%r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs);
         otherwise, error('NYI');
     end;
-
-
-function vals = compute_common_vals(nets, sims)
-
-    sim = sims{1}{1};
-
-    vals.pat_types = sim.pat_types;
-    vals.npattypes = length(vals.pat_types);
-
-    % Only do one hemi (not rh/lh separately)
-    vals.locs      = cellfun(@(loc) loc(4:end), sim.hemi_locs(1:end/2), 'UniformOutput', false);
-    vals.nlocs     = length(vals.locs);
-    vals.tsteps    = sim.tsteps;
-    vals.nsims     = length(sim.rh_output(1).patsim);
-
-    vals.ncc    = cellfun(@(nets) nets{1}.sets.ncc,              nets(:,1,1));
-    vals.delays = cellfun(@(nets) max(nets{1}.sets.D_CC_LIM(:)), nets(1,:,1));
-    vals.Ts     = cellfun(@(nets) max(nets{1}.sets.T_LIM(:)),    nets(:,1,1));
-
 
 
 function r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_plotted)
@@ -39,7 +21,7 @@ function r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_
 
     if ~exist('data_plotted', 'var'), data_plotted = 5; end;
 
-    vals = compute_common_vals(nets, sims);
+    vals = r_compute_common_vals(nets, sims);
     yvals = sort(vals.(dim));
     cc_locs = find(cellfun(@(a) ~isempty(a), regexp(vals.locs, 'cc$')));
     ih_locs = find(cellfun(@(a) ~isempty(a), regexp(vals.locs, 'ih$')));
@@ -60,7 +42,7 @@ function r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_
         for pti=1:vals.npattypes
             f1h = figure('Position', [ 0         0        400*ncols         350*nrows]);
 
-            data = zeros(vals.nlocs, length(vals.(dim)), vals.tsteps);
+            data = nan(vals.nlocs, length(vals.(dim)), vals.tsteps);
 
             for rowi=1:nrows
                 for coli=1:ncols
@@ -76,6 +58,7 @@ function r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_
                         end;
 
                         for xi=1:length(vals.(dim))
+                            if isempty(simstats{xi}), continue; end;
                             data(li, xi, :) = abs(squeeze(simstats{xi}(:, li, pti, data_plotted))); %eliminate the sign for cleaner plotting
                         end;
                         surf(1:vals.tsteps, vals.(dim), squeeze(data(li, :, :)));
