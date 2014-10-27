@@ -43,6 +43,8 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
             net = nets{ni, di, ti}{mi};
             data = datas{ni, di, ti}{mi};
 
+            guru_assert(isfield(data, 'actcurve'), 'actcurve not in data!');
+
             % Will propagate data to cell array.
             fprintf('Computing similarity...')
             [data.an.sim, data.an.simstats] = r_compute_similarity(net, pats);
@@ -81,7 +83,7 @@ function [nets, pats, datas, figs] = asymmetry_looper(template_net, nexamples, n
 
 
 function [sims, simstats, niters, good_idx] = r_analyze(sets, datas)
-    good_idx     = cellfun(@(d) all(all(squeeze(abs(abs(d.actcurve(end,:,:))-1)) <= sets.train_criterion)), datas);
+    good_idx     = cellfun(@(d) ~isfield(d, 'ex') && isfield(d, 'actcurve') && all(all(squeeze(abs(abs(d.actcurve(end,:,:))-1)) <= sets.train_criterion)), datas);
 
     anz          = cellfun(@(d) d.an, datas(good_idx), 'UniformOutput', false);
     sims         = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
@@ -97,6 +99,7 @@ function r_report_training(nets, niters)
 
 function r_plot_niters(nets, sims, niters)
     vals = r_compute_common_vals(nets, sims);
+    if isempty(vals), return; end;
 
     dims = {'delays', 'ncc'};
     dim_idx = cellfun( @(dim) length(vals.(dim)) > 1, dims);%, []), , 'UniformOutput', false );
@@ -118,16 +121,15 @@ function r_plot_niters(nets, sims, niters)
     title('# iterations.');
 
     % Number of trained models
-    max_iters = nets{1}{1}.sets.niters;
     switch sum(dim_idx) % # non-singular values (i.e. was iterated)
         case 1
             dim = dims{dim_idx};
             figure;
-            bar(vals.(dim), cellfun(@(n) 100*mean(n<max_iters), niters));
+            bar(vals.(dim), cellfun(@(n) 100*mean(n<vals.max_iters), niters));
             xlabel(dim); ylabel('% models');
         case 2
             figure;
-            surf(vals.delays, vals.ncc, cellfun(@(n) 100*mean(n<max_iters), niters));
+            surf(vals.delays, vals.ncc, cellfun(@(n) 100*mean(n<vals.max_iters), niters));
 
         case 0, ;
         otherwise, error('NYI');

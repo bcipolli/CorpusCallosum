@@ -33,15 +33,19 @@ function [net, pats, data] = r_dummy(sets, rseed)
     net = r_massage_params(net);
     matfile = fullfile(net.sets.dirname, net.sets.matfile);
     if exist(matfile, 'file')
-        fprintf('Skipping %s\n', matfile);
+        fprintf('Skipping %s...', matfile);
         load(matfile);
         if false && (~isfield(data, 'an') || ~isfield(data.an, 'sim'))
-            keyboard
+            guru_assert(false, 'an and an.sim were not in data.  WHY?');
             [data.an] = r_analyze(net, pats, data);
             save(matfile, 'net', 'pats', 'data');
         end;
-        return;
-    end; % don't re-run
+        if true || isfield(data, 'actcurve')
+            fprintf('\n');
+            return;
+        end;
+        fprintf(' or not; no actcurve!  Retraining...\n');
+    end;
 
     %
     if ~exist(net.sets.dirname,'dir'), mkdir(net.sets.dirname); end;
@@ -50,6 +54,9 @@ function [net, pats, data] = r_dummy(sets, rseed)
         [data.an]                = r_analyze(net, pats, data);
         %unix(['mv ' net.sets.matfile ' ./' net.sets.dirname]);
     else
+        data.ex = ex;
         fprintf('Error: %s\nCall stack:\n', ex.message);
         fprintf('\t%s\n', ex.stack.file);
     end;
+
+    guru_assert(isfield(data, 'actcurve') || isfield(data, 'ex') , 'actcurve not in data!');

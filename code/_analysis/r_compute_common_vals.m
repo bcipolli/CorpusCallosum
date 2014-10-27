@@ -1,6 +1,14 @@
 function vals = compute_common_vals(nets, sims)
 
-    sim = sims{1}{1};
+    good_idx = find(cellfun(@(c) ~isempty(c), nets));
+
+    if ~any(good_idx)
+        vals = [];
+        return;
+    end;
+
+    sim = sims{good_idx(1)}{1};
+    net = nets{good_idx(1)}{1};
 
     vals.pat_types = sim.pat_types;
     vals.npattypes = length(vals.pat_types);
@@ -15,6 +23,7 @@ function vals = compute_common_vals(nets, sims)
     vals.delays = cellfun(@(nets) max(max(max(getSet(nets, 'D_CC_LIM')))), nets(1,:,1));
     vals.Ts     = cellfun(@(nets) max(max(getSet(nets, 'T_LIM'))),    nets(:,1,1));
 
+    vals.max_iters = net.sets.niters;
 
 
 function val = getSet(nets, set)
