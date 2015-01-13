@@ -16,6 +16,9 @@ function mv = r_make_movie(net, y, pat, outfile)
     % we got the patterns, not an actual y value
     if isstruct(y)
         pats = y;
+        net.cC(net.idx.cc, net.idx.cc) = false;
+        net.wC(net.idx.cc, net.idx.cc) = false;
+        net.w(net.idx.cc, net.idx.cc) = 0;
         y = getfield(r_forwardpass(net, pats.test),'y');
     end;
 
@@ -28,13 +31,22 @@ function mv = r_make_movie(net, y, pat, outfile)
 
     %mv = struct('F',F,'fps',1/tdelay,'winsz',[size(F(1).cdata,1) size(F(1).cdata,2)]);
     %movie(mv);
-
+    
     if ~isempty(outfile)
-        avi = avifile(outfile);
-        for fi=1:length(F)
-            avi = addframe(avi, F(fi));
+        fprintf('writing movie to %s...', outfile);
+        %avi = avifile(outfile, 'fps', 1/tdelay, 'quality', 100, 'compression', 'None');
+        %for fi=1:length(F)
+        %    avi = addframe(avi, F(fi));
+        %end;
+        %avi = close(avi);
+        
+        if ~exist(outfile, 'dir')
+            mkdir(outfile);
         end;
-        avi = close(avi);
+        for fi=1:length(F)
+            imwrite(F(fi).cdata, sprintf(fullfile(outfile, '%d.png'), fi));
+        end;
+        fprintf(' done.\n');
     end;
     
     
@@ -126,7 +138,6 @@ function F = r_make_movie_le(net, y, pat, col_fn, tdelay)
     ihr_h(end+1) = mfe_filledCircle([ihr_cent(1) ihr_cent(2)+4.5*circ_spc(2)], circ_r, circ_pts, 'r');
 
     %
-    % keyboard
     % rectangle('Position', [in_cent-[6 2]/2 [6 2]]);
     % rectangle('Position', [ihr_cent-[4 6]/2 [5 5]]);
     % rectangle('Position', [ihl_cent-[6 6]/2 [5 5]]);
@@ -285,7 +296,6 @@ function F = r_make_movie_ringo(net, y, pat, col_fn, tdelay)
     ih2r_h(end+1) = mfe_filledCircle([ih2r_cent(1)-2*circ_spc(1) ih2r_cent(2)-1*circ_spc(2)], circ_r, circ_pts, 'r');
     ih2r_h(end+1) = mfe_filledCircle([ih2r_cent(1)-2*circ_spc(1) ih2r_cent(2)              ], circ_r, circ_pts, 'r');
     %
-    % keyboard
     % rectangle('Position', [in_cent-[6 2]/2 [6 2]]);
     % rectangle('Position', [ih1r_cent-[4 6]/2 [5 5]]);
     % rectangle('Position', [ih1l_cent-[6 6]/2 [5 5]]);
