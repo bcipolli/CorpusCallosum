@@ -2,7 +2,8 @@ function r_analyze_similarity_surfaces(nets, sims, simstats, figs)
 
 
     if ~iscell(nets), nets = { nets }; end;
-    if ~exist('figs', 'var'), figs = [1:3]; end;
+    if ~exist('figs', 'var'), figs = [2]; end;
+    figs = 2;
 
     dims = {'ncc', 'delays', 'Ts'};
     dims_looped = size(nets) > 1;
@@ -38,56 +39,48 @@ function r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_
     nrows = length(cc_locs);
 
     %% Figure 1: mean difference from output similarity
-    if ismember(1, figs)
-        for pti=1:vals.npattypes
+    for pti=1:vals.npattypes
+        if ismember(1, figs)
             f1h = figure('Position', [ 0         0        400*ncols         350*nrows]);
+        end;
+        if ismember(2, figs)
+            f2h = figure('Position', [ 0         0        500*ncols         350*nrows]);
+        end;
 
-            data = nan(vals.nlocs, length(vals.(dim)), vals.tsteps);
+        data = nan(vals.nlocs, length(vals.(dim)), vals.tsteps);
 
-            for rowi=1:nrows
-                for coli=1:ncols
-                    ploti = coli + ncols*(rowi-1);
+        for rowi=1:nrows
+            for coli=1:ncols
+                guru_assert(coli ~= 3 || ~isnan(hu_locs(rowi))); % just dump directly
+
+                ploti = coli + ncols*(rowi-1);
+
+                switch coli
+                    case 1, li = cc_locs(rowi);
+                    case 2, li = ih_locs(rowi);
+                    case 3, li = hu_locs(rowi);
+                end;
+
+                for xi=1:length(vals.(dim))
+                    if isempty(simstats{xi}), continue; end;
+                    data(li, xi, :) = abs(squeeze(simstats{xi}(:, li, pti, data_plotted))); %eliminate the sign for cleaner plotting
+                end;
+
+                if ismember(1, figs)
+                    figure(f1h);
                     subplot(nrows,ncols,ploti);
                     set(gca, 'FontSize', 16);
 
-                    if coli ~= 3 || ~isnan(hu_locs(rowi)) % just dump directly
-                        switch coli
-                            case 1, li = cc_locs(rowi);
-                            case 2, li = ih_locs(rowi);
-                            case 3, li = hu_locs(rowi);
-                        end;
+                    surf(1:vals.tsteps, vals.(dim), squeeze(data(li, :, :)));
 
-                        for xi=1:length(vals.(dim))
-                            if isempty(simstats{xi}), continue; end;
-                            data(li, xi, :) = abs(squeeze(simstats{xi}(:, li, pti, data_plotted))); %eliminate the sign for cleaner plotting
-                        end;
-                        surf(1:vals.tsteps, vals.(dim), squeeze(data(li, :, :)));
-
-                        switch vals.locs{li}
-                            case 'cc', tit='inter-';
-                            case 'ih', tit='intra-';
-                            case 'hu', tit='hidden';
-                            otherwise, tit = vals.locs{li};
-                        end;
-                        title(strrep(tit, '_', '\_'));
-
-                    else % compute averages over cc & ih
-                        alphas = cellfun(@(nets) nets{1}.sets.ncc / nets{1}.sets.nhidden_per, nets);
-                        alphas = repmat(alphas(:), [1 vals.tsteps]);
-
-                        cc_data = squeeze(data(cc_locs(rowi), :, :)); cc_data(isnan(cc_data)) = 0;
-                        ih_data = squeeze(data(ih_locs(rowi), :, :)); ih_data(isnan(ih_data)) = 0;
-
-                        if strcmp(vals.locs{cc_locs(rowi)}, 'cc')
-                            loc_title = 'all hidden';
-                        else
-                            loc_title = sprintf('all (%s) hidden', vals.locs{cc_locs(rowi)}(1:end-length('_cc')));
-                        end;
-
-                        surf_data = alphas .* cc_data + (1-alphas) .* ih_data;
-                        surf(1:vals.tsteps, yvals, surf_data);
-                        title(loc_title);
+                    switch vals.locs{li}
+                        case 'cc', tit='inter-';
+                        case 'ih', tit='intra-';
+                        case 'hu', tit='hidden';
+                        otherwise, tit = vals.locs{li};
                     end;
+                    title(strrep(tit, '_', '\_'));
+
                     set(gca, 'xlim', [1 vals.tsteps], 'ylim', [min(yvals), max(yvals)], 'zlim', sort([0 1]));
                     set(gca, 'ytick', yvals);
                     view([40.5 32]);
@@ -98,6 +91,30 @@ function r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_
                         otherwise, ylabel(dim);
                     end;
                 end;
+
+                if ismember(2, figs)
+                    figure(f2h);
+                    subplot(nrows,ncols,ploti);
+                    set(gca, 'FontSize', 16);
+
+                    % 7 unique colors. 1 is NaN, so start at 2
+                    tsamps = round(linspace(2, vals.tsteps, 7));
+
+                    plot(vals.(dim), squeeze(data(li, :, tsamps)), 'LineWidth', 2);
+
+                    switch vals.locs{li}
+                        case 'cc', tit='inter-';
+                        case 'ih', tit='intra-';
+                        case 'hu', tit='hidden';
+                        otherwise, tit = vals.locs{li};
+                    end;
+                    title(strrep(tit, '_', '\_'));
+
+                    xlabel(dim); ylabel('asymmetry');
+                    set(gca, 'xlim', [1 max(vals.(dim))*1.5]);
+                    legend(guru_csprintf('%d', tsamps), 'Location', 'NorthEast');
+                end;
+
             end;
         end;
     end;

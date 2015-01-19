@@ -41,7 +41,7 @@ function r_analyze_similarity(nets, sim, simstats, figs)
     end;
 
 
-    %% Figure 2: asymmetry in difference from output similarity
+    %% Figure 2: asymmetry in difference from input similarity
     if ismember(2, figs)
         f2h = figure('Position', [ 72         327        1227         446]);
         prop_cc = nets{1}.sets.ncc / nets{1}.sets.nhidden_per;
