@@ -1,4 +1,4 @@
-function [nets, pats, datas, figs] = r_asymmetry_looper(template_net, nexamples, nccs, delays, Ts, loop_figs, summary_figs)
+function [nets, pats, datas, figs] = r_asymmetry_looper(template_net, nexamples, nccs, delays, Ts, loop_figs, summary_figs, results_dir)
 %
 
     if ~exist('nexamples', 'var'), nexamples = 10; end;
@@ -7,8 +7,8 @@ function [nets, pats, datas, figs] = r_asymmetry_looper(template_net, nexamples,
     if ~exist('Ts', 'var'), Ts = unique(template_net.sets.T_INIT) / template_net.sets.dt; end;
     if ~exist('loop_figs', 'var'), loop_figs = []; end;
     if ~exist('summary_figs', 'var'), summary_figs = [1 2]; end;
-
-    if ~exist('results', 'dir'), mkdir('results'); end;
+    if ~exist('results_dir', 'var'), results_dir = fullfile(r_out_path('plot'), 'current'); end;
+    if ~exist(results_dir, 'dir'), mkdir(results_dir); end;
 
     nets = cell(length(nccs), length(delays), length(Ts));
     datas = cell(size(nets));
@@ -78,9 +78,8 @@ function [nets, pats, datas, figs] = r_asymmetry_looper(template_net, nexamples,
     end;
 
     abc = dbstack;
-    dir_name = 'results';
     script_name = abc(end).name;
-    guru_saveall_figures(fullfile(dir_name, script_name), {'png'}, false, true);
+    guru_saveall_figures(fullfile(results_dir, script_name), {'png'}, false, true);
 
 
 function [sims, simstats, niters, built_idx, trained_idx] = r_analyze(sets, datas)
