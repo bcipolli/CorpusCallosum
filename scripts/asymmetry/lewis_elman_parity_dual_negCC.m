@@ -19,5 +19,5 @@ ncc = round(linspace(0, net.sets.nhidden_per, 6));
 delays = [1 5 10 15 20];
 
 % Sample along ncc and delays independently
-asymmetry_looper(net, 10, ncc,              delays(ceil(end/2)));
-asymmetry_looper(net, 10, ncc(ceil(end/2)), delays);
+r_asymmetry_looper(net, 10, ncc,              delays(ceil(end/2)));
+r_asymmetry_looper(net, 10, ncc(ceil(end/2)), delays);
