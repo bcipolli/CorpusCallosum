@@ -61,7 +61,7 @@ net.sets.noise_input      = 1E-6;%.001;%001;%1;
 dirname = mfilename();
 sets = net.sets;
 
-dirname = r_out_path('runs', mfilename);
+dirname = guru_getOutPath('runs', mfilename);
 for s=(288+[1:25])
    clear 'net';
    net.sets = sets;

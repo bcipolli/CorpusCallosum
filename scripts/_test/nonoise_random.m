@@ -55,7 +55,7 @@ net.sets.activity_dependent = true;
 net.sets.noise_init       = 0;%.001;%1;
 net.sets.noise_input      = 1E-6;%.001;%001;%1;
 
-dirname = fullfile(guru_getOutPath('cache'), 'ringo', guru_fileparts(pwd, 'name'), guru_fileparts(mfilename, 'name'));
+dirname = fullfile(guru_getOutPath('cache'), guru_fileparts(pwd, 'name'), guru_fileparts(mfilename, 'name'));
 sets= net.sets;
 
 if ~exist(dirname,'dir'), mkdir(dirname); end;

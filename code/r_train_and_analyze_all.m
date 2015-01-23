@@ -11,7 +11,7 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     if ~exist('Ts', 'var'), Ts = unique(template_net.sets.T_INIT) / template_net.sets.dt; end;
     if ~exist('loop_figs', 'var'), loop_figs = []; end;
     if ~exist('summary_figs', 'var'), summary_figs = [0 1 2]; end;
-    if ~exist('results_dir', 'var'), results_dir = fullfile(r_out_path('plot'), 'current'); end;
+    if ~exist('results_dir', 'var'), results_dir = fullfile(guru_getOutPath('plot'), 'current'); end;
     if ~exist('figures_output_extensions', 'var'), figures_output_extensions = {'png'}; end;
     if ~exist('figures_output_dir', 'var'),
         abc = dbstack;

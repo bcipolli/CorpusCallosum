@@ -58,7 +58,7 @@ net.sets.noise_input      = 1E-6;%.001;%001;%1;
 %[net,pats,data]          = r_train_one(net);
 %[data.an]                = r_analyze(net, pats, data);
 
-dirname = r_out_path('runs', mfilename);
+dirname = guru_getOutPath('runs', mfilename);
 sets = net.sets;
 
 if ~exist(dirname,'dir'), mkdir(dirname); end;

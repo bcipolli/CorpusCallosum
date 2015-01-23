@@ -5,7 +5,7 @@ function fs=tdlc2013_figures(data_path, plots, intype, etype, cache_file)
 % cache_file: a pointer to the cache file; use IFF data_dir is not empty.
 %     Otherwise, specify the cache_file as the data_path (see above)
 
-    if ~exist('r_out_path',     'file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
+    if ~exist('guru_getOutPath',     'file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
     if ~exist('guru_getOptPath','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','..','_lib'))); end;
 
     % default vars
@@ -24,13 +24,13 @@ function fs=tdlc2013_figures(data_path, plots, intype, etype, cache_file)
         data_dir = [];
         
     % Fix path  
-    elseif ~exist(data_path,'dir') && exist(fullfile(r_out_path('cache'), data_path), 'dir')
-        data_dir = fullfile(r_out_path('cache'), data_path);
+    elseif ~exist(data_path,'dir') && exist(fullfile(guru_getOutPath('cache'), data_path), 'dir')
+        data_dir = fullfile(guru_getOutPath('cache'), data_path);
 
     else
         data_dir = data_path
     end;
-        %if ~exist('cache_file', 'var'),cache_file= fullfile(r_out_path('cache'), 'tdlc2013_cache.mat'); end;
+        %if ~exist('cache_file', 'var'),cache_file= fullfile(guru_getOutPath('cache'), 'tdlc2013_cache.mat'); end;
 
     [data, nts, noise, delay] = collect_data_looped_tdlc(data_dir, cache_file);
     if    isempty(data),               error('No data found at %s', data_dir);

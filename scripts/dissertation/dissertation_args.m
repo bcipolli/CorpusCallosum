@@ -57,4 +57,4 @@ function net = dissertation_args(tsteps, Idel, Idur, Sdel, Sdur)
     net.sets.noise_init       = 0;
     net.sets.noise_input      = 0; %%1E-6;  % Noisy input
 
-    net.sets.dirname          = fullfile(r_out_path('cache'), guru_fileparts(which(mfilename), 'dir'))  % output directory
+    net.sets.dirname          = fullfile(guru_getOutPath('cache'), guru_fileparts(which(mfilename), 'dir'))  % output directory

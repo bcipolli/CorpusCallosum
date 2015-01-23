@@ -1,6 +1,6 @@
 addpath(genpath(fullfile(fileparts(which(mfilename)), '..', '..', 'code')));
 
-expt1_dir = fullfile(r_out_path('cache'), 'dissertation');
+expt1_dir = fullfile(guru_getOutPath('cache'), 'dissertation');
 cache_file = fullfile(expt1_dir, 'expt1_cache.mat')
 
 

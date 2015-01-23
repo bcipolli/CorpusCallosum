@@ -58,7 +58,7 @@ for rseed=(289-1+[1:chunk_size:25])
   for tsteps=[15:5:50 75]
     for delay=[2 10]
       for noise=[2E-2/delay 0] % 1% activation
-          dirname = fullfile(guru_getOutPath('cache'), 'ringo', 'tdlc2013', sprintf('%s-%dts-%dd%s', mfilename(), tsteps, delay,guru_iff(noise>0,'n','')));
+          dirname = fullfile(guru_getOutPath('cache'), 'tdlc2013', sprintf('%s-%dts-%dd%s', mfilename(), tsteps, delay,guru_iff(noise>0,'n','')));
           if ~exist(dirname,'dir'), mkdir(dirname); end;
 
           % Make sure not to reuse networks!

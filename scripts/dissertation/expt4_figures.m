@@ -6,7 +6,7 @@ function [fh] = expt4_figures(force)
     if ~exist('r_plot_ringo_figures','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
 
     if ~exist('force', 'var'), force = false; end;
-    if ~exist('cache_file', 'var'), cache_file = fullfile(r_out_path('cache'), guru_fileparts(which(mfilename), 'dir'), sprintf('%s_cache.mat', mfilename)); end;
+    if ~exist('cache_file', 'var'), cache_file = fullfile(guru_getOutPath('cache'), guru_fileparts(which(mfilename), 'dir'), sprintf('%s_cache.mat', mfilename)); end;
     if ~exist('plots', 'var'), plots = 0:10; end;
 
     fh = [];

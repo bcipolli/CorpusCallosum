@@ -9,7 +9,7 @@ addpath(genpath(fullfile(fileparts(which(mfilename)), '..', '..', 'code')));
 
 %% Experiment 1
 
-expt1_dir = fullfile(r_out_path('cache'), guru_fileparts(which(mfilename), 'dir'));
+expt1_dir = fullfile(guru_getOutPath('cache'), guru_fileparts(which(mfilename), 'dir'));
 cache_file = fullfile(expt1_dir, 'expt1_cache.mat');
 expt1_noise_dir = fullfile(expt1_dir, 'expt1_noise_10_1');
 expt1_extra_noise_dir = fullfile(expt1_dir, 'expt1_noise_10_2');

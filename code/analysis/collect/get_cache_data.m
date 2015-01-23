@@ -71,8 +71,8 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
                 for di=1:length(remain_dirs)
                   % Get the approriate directory
                   d = remain_dirs{di};
-                  if ~exist(d,'dir') && exist(fullfile(r_out_path('cache'), d),'dir')
-                       d = fullfile(r_out_path('cache'), remain_dirs{di});
+                  if ~exist(d,'dir') && exist(fullfile(guru_getOutPath('cache'), d),'dir')
+                       d = fullfile(guru_getOutPath('cache'), remain_dirs{di});
                   end;
 
                   % Load the data

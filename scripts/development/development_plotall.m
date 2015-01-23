@@ -1,6 +1,6 @@
 addpath(genpath(fullfile(fileparts(which(mfilename)), '..', '..', 'code')));
 
-cogsci_dir = fullfile(r_out_path('cache'), 'development');
+cogsci_dir = fullfile(guru_getOutPath('cache'), 'development');
 cache_file = fullfile(cogsci_dir, 'development_cache.mat');
 
 %% Noise dependence: 10 time-steps

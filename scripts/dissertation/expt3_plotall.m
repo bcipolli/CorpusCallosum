@@ -1,7 +1,7 @@
 clear all global
 addpath(genpath(fullfile(fileparts(which(mfilename)), '..', '..', 'code')));
 
-expt3_dir = fullfile(r_out_path('cache'), 'dissertation');
+expt3_dir = fullfile(guru_getOutPath('cache'), 'dissertation');
 cache_file = fullfile(expt3_dir, 'expt3_cache.mat');
 
 %% Noise dependence: 10 time-steps
