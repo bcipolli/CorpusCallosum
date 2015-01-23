@@ -1,5 +1,7 @@
-
-function mat = pdist2mat(dat)
+function mat = my_squareform(dat)
+%function mat = my_squareform(dat)
+%
+% squareform
     sz =  (1 + sqrt(1 + 4*1*2*numel(dat))) / 2;  % quadratic solution for M(M-1)/2 = numel(dat)
     guru_assert(sz == floor(sz), 'sz is an integer.');
 

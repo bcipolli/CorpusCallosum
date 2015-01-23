@@ -163,25 +163,25 @@ function f = plot_hu_sim(cdata, ndata, lbl)
     ndata_lh = ndata.intact.lh_sim;
 
     subplot(2,3,1);
-    imagesc(pdist2mat(mean(cdata_rh, 1)));
+    imagesc(my_my_squareform(mean(cdata_rh, 1)));
     axis square;
     set(gca, 'xtick',[],'ytick',[]);
     title(['(no-noise) RH Similarity' lbl]);
 
     subplot(2,3,4);
-    imagesc(pdist2mat(mean(cdata_lh, 1)));
+    imagesc(my_squareform(mean(cdata_lh, 1)));
     axis square;
     set(gca, 'xtick',[],'ytick',[]);
     title(['(no-noise) LH Similarity' lbl]);
 
     subplot(2,3,2);
-    imagesc(pdist2mat(mean(ndata_rh, 1)));
+    imagesc(my_squareform(mean(ndata_rh, 1)));
     axis square;
     set(gca, 'xtick',[],'ytick',[]);
     title(['(noise) RH Similarity' lbl]);
 
     subplot(2,3,5);
-    imagesc(pdist2mat(mean(ndata_lh, 1)));
+    imagesc(my_squareform(mean(ndata_lh, 1)));
     axis square;
     set(gca, 'xtick',[],'ytick',[]);
     xlabel('LH pattern #');
@@ -189,13 +189,13 @@ function f = plot_hu_sim(cdata, ndata, lbl)
 
     if isfield(cdata, 'rh_in_sim')
         subplot(2,3,3);
-        imagesc(pdist2mat(cdata.rh_in_sim));
+        imagesc(my_squareform(cdata.rh_in_sim));
         axis square;
         set(gca, 'xtick',[],'ytick',[]);
         title('input similarity');
 
         subplot(2,3,6);
-        imagesc(pdist2mat(cdata.rh_out_sim));
+        imagesc(my_squareform(cdata.rh_out_sim));
         axis square;
         set(gca, 'xtick',[],'ytick',[]);
         title('output similarity');
