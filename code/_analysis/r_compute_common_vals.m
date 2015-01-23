@@ -1,4 +1,7 @@
-function vals = compute_common_vals(nets, sims)
+function vals = compute_common_vals(nets, sims, unique_values)
+    if ~exist('unique_values', 'var')
+        unique_values = true;
+    end;
 
     good_idx = find(cellfun(@(c) ~isempty(c), nets));
 
@@ -19,9 +22,15 @@ function vals = compute_common_vals(nets, sims)
     vals.tsteps    = sim.tsteps;
     vals.nsims     = length(sim.rh_output(1).patsim);
 
-    vals.ncc    = cellfun(@(nets) getSet(nets, 'ncc'),                nets(:,1,1));
-    vals.delays = cellfun(@(nets) max(max(max(getSet(nets, 'D_CC_LIM')))), nets(1,:,1));
-    vals.Ts     = cellfun(@(nets) max(max(getSet(nets, 'T_LIM'))),    nets(:,1,1));
+    vals.ncc    = cellfun(@(nets) getSet(nets, 'ncc'),           nets);
+    vals.delays = cellfun(@(nets) max(getSet(nets, 'D_CC_LIM')), nets);
+    vals.Ts     = cellfun(@(nets) max(getSet(nets, 'T_LIM')),    nets);
+
+    if unique_values
+        vals.ncc = unique(vals.ncc(:));
+        vals.delays = unique(vals.delays(:));
+        vals.Ts = unique(vals.Ts(:));
+    end;
 
     vals.max_iters = net.sets.niters;
 
@@ -31,4 +40,5 @@ function val = getSet(nets, set)
         val = NaN;
     else
         val = nets{1}.sets.(set);
+        val = val(:);
     end;

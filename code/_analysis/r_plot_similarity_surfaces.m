@@ -3,7 +3,6 @@ function r_plot_similarity_surfaces(nets, sims, simstats, figs)
 
     if ~iscell(nets), nets = { nets }; end;
     if ~exist('figs', 'var'), figs = [2]; end;
-    figs = 2;
 
     dims = {'ncc', 'delays', 'Ts'};
     dims_looped = size(nets) > 1;
@@ -12,10 +11,47 @@ function r_plot_similarity_surfaces(nets, sims, simstats, figs)
     switch ndims_looped
         case 0, warning('No valid networks were trained, so no plots can be made.'); return;
         case 1, r_plot_similarity_surfaces_1D(nets, sims, simstats, figs, dims{dims_looped}, 9); % 5=mean, 9=corr
-        case 2, fprintf('2D looping movie NYI\n');%r_plot_similarity_surfaces_1D(nets, sims, simstats, figs);
+        case 2, r_plot_similarity_surfaces_2D(nets, sims, simstats, figs, dims(dims_looped), 9);
         otherwise, error('NYI');
     end;
 
+
+function r_plot_similarity_surfaces_2D(nets, sims, simstats, figs, dims_looped, data_plotted)
+
+    % Draw plots for first dimension
+    vals = r_compute_common_vals(nets, sims, false);
+    unique_vals = r_compute_common_vals(nets, sims);
+    arg_order = {'ncc', 'delays', 'Ts'};
+
+    for di=1:length(dims_looped)
+        cur_dim = dims_looped{di};
+        cur_vals = unique_vals.(cur_dim);
+        other_dim = setdiff(dims_looped, {cur_dim}); other_dim = other_dim{1};
+
+        for xi=1:length(cur_vals)
+            cur_idx = vals.(cur_dim) == cur_vals(xi);
+            r_plot_similarity_surfaces_1D( ...
+                nets(cur_idx), ...
+                sims(cur_idx), ...
+                simstats(cur_idx), ...
+                figs, ...
+                other_dim, ...
+                data_plotted);
+        end;
+    end;
+
+    % Draw urface plot of
+
+    % We want to get a single number about interhemispheric communication
+    %   So, we need to compute the shift, then summarize something about the gap between.
+    % Can compute the difference curve... then what?  how to boil down to a single number?
+    %   Perhaps the mean remaining gap?
+    keyboard
+
+    % We want to get a single number about asymmetry.
+    %   Currently, we have a number at each timestep.
+    %   Let's get a number at 1/3, 2/3, and 3/3 of the
+    %   tSteps.
 
 function r_plot_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_plotted)
 % When we vary on just one dimension, show as a surface plot vs. time
@@ -41,10 +77,10 @@ function r_plot_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_plo
     %% Figure 1: mean difference from output similarity
     for pti=1:vals.npattypes
         if ismember(1, figs)
-            f1h = figure('Position', [ 0         0        400*ncols         350*nrows]);
+            f1h = figure('name', 'f1h', 'Position', [ 0  0 400*ncols  350*nrows]);
         end;
         if ismember(2, figs)
-            f2h = figure('Position', [ 0         0        500*ncols         350*nrows]);
+            f2h = figure('name', 'f2h', 'Position', [ 0  0 500*ncols  350*nrows]);
         end;
 
         data = nan(vals.nlocs, length(vals.(dim)), vals.tsteps);
