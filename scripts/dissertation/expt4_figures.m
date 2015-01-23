@@ -3,7 +3,7 @@ function [fh] = expt4_figures(force)
 %
     global g_sets_cache
 
-    if ~exist('ringo_figures','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
+    if ~exist('r_plot_ringo_figures','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
 
     if ~exist('force', 'var'), force = false; end;
     if ~exist('cache_file', 'var'), cache_file = fullfile(r_out_path('cache'), guru_fileparts(which(mfilename), 'dir'), sprintf('%s_cache.mat', mfilename)); end;
@@ -30,12 +30,12 @@ function [fh] = expt4_figures(force)
     for d1=1:length(datasets)
         noise_dir   = sprintf('%s_noise_n%d',  datasets{d1}, ncc);
         nonoise_dir = sprintf('%s_nonoise_n%d',datasets{d1}, ncc);
-        ringo_figures(nonoise_dir, noise_dir, [0.4], cache_file);
+        r_plot_ringo_figures(nonoise_dir, noise_dir, [0.4], cache_file);
 
         fprintf('%s\n', datasets{d1});
         for fignum=[0.6 0.8 1.4 1.6 2.2 3.2 3.3]
             %continue;
-            ringo_figures(nonoise_dir, noise_dir, fignum, cache_file);
+            r_plot_ringo_figures(nonoise_dir, noise_dir, fignum, cache_file);
             %[~,~,oh] = legend();
             %title(sprintf('Effects of noise (%s, ncc=%d; %s)', plot_escape(datasets{d1}), ncc, get(get(gca,'Title'), 'String')));
             set(gcf, 'Name', sprintf('%s-%s', datasets{d1}, guru_iff(fignum == 3.2, 'intra', 'inter')));
@@ -53,7 +53,7 @@ function [fh] = expt4_figures(force)
 %         ncc2_dir = sprintf('%s_nonoise_n2',datasets{d1});
 %
 %         for fignum=[0.4]
-%             ringo_figures(ncc0_dir, ncc2_dir, fignum);
+%             r_plot_ringo_figures(ncc0_dir, ncc2_dir, fignum);
 %             [~,~,oh] = legend();
 %             title(sprintf('Effect of #cc (within a dataset) (%s, nonoise)', plot_escape(datasets{d1})));
 %             legend(oh, {'Intact (ncc=0)', 'Lesioned (ncc=0)', 'Intact (ncc=2)', 'Lesioned (ncc=2)'});
@@ -72,7 +72,7 @@ function [fh] = expt4_figures(force)
             figs = [0.6 0.8];
             for fi=1:2
                 ca = subplot(1,2,fi);
-                ringo_figures(d1_dir, d2_dir, figs(fi));
+                r_plot_ringo_figures(d1_dir, d2_dir, figs(fi));
                 set(gcf, 'Position', [311    50   923   734]);
                 [~,~,oh] = legend();
                 %title(sprintf('Compare across datasets (no noise, ncc=%d)', ncc));
@@ -101,7 +101,7 @@ function [fh] = expt4_figures(force)
             figs = [0.6 0.8];
             for fi=1:2
                 ca = subplot(1,2,fi);
-                ringo_figures(d1_dir, d2_dir, figs(fi));
+                r_plot_ringo_figures(d1_dir, d2_dir, figs(fi));
                 set(gcf, 'Position', [311    50   923   734]);
                 [~,~,oh] = legend();
                 legend(oh, {sprintf('Intact (%s)',   plot_escape(datasets{d1})), ...

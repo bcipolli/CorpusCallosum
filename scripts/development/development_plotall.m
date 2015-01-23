@@ -4,7 +4,7 @@ cogsci_dir = fullfile(r_out_path('cache'), 'development');
 cache_file = fullfile(cogsci_dir, 'development_cache.mat');
 
 %% Noise dependence: 10 time-steps
-for fi=ringo_figures(fullfile(cogsci_dir, 'nonoise_test_2000'), fullfile(cogsci_dir, 'noise_test_2000'), [0.4 1.2 2.2 3], cache_file)
+for fi=r_plot_ringo_figures(fullfile(cogsci_dir, 'nonoise_test_2000'), fullfile(cogsci_dir, 'noise_test_2000'), [0.4 1.2 2.2 3], cache_file)
     %figure(fi);
     %title('Learning Trajectory (delay=10 time-steps)');
 %    [~,~,oh] = legend();

@@ -1,4 +1,4 @@
-function fs = ringo_figures(clean_dir, noise_dir, plots, cache_file)
+function fs = r_plot_ringo_figures(clean_dir, noise_dir, plots, cache_file)
 
 % Defaults & scrubbing input
 %if ~exist('clean_dir', 'var'), clean_dir = 'nonoise.10'; end;

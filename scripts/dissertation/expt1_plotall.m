@@ -6,7 +6,7 @@ cache_file = fullfile(expt1_dir, 'expt1_cache.mat')
 
 
 %% Noise dependence: 10 time-steps
-for fi=ringo_figures(fullfile(expt1_dir, 'expt1_nonoise_10'), fullfile(expt1_dir, 'expt1_noise_10_1'), [0.4 0.6 0.8 1.4 1.6 1.8 2.2], cache_file)
+for fi=r_plot_ringo_figures(fullfile(expt1_dir, 'expt1_nonoise_10'), fullfile(expt1_dir, 'expt1_noise_10_1'), [0.4 0.6 0.8 1.4 1.6 1.8 2.2], cache_file)
 %    figure(fi);
 %    title('Learning Trajectory (delay=10 time-steps)');
 %    [~,~,oh] = legend();
@@ -16,7 +16,7 @@ return
 
 
 %% Noise dependence: 2 time-steps
-for fi=ringo_figures(fullfile(expt1_dir, 'nonoise_2'), fullfile(expt1_dir, 'noise_2_1'), [0.4 0.8], cache_file)
+for fi=r_plot_ringo_figures(fullfile(expt1_dir, 'nonoise_2'), fullfile(expt1_dir, 'noise_2_1'), [0.4 0.8], cache_file)
     figure(fi);
     title('Learning Trajectory (delay=2 time-steps)');
 %    [~,~,oh] = legend();
@@ -26,7 +26,7 @@ end;
 %% Time dependence: control
 
 % % wrongly classified
-for fi=ringo_figures(fullfile(expt1_dir, 'expt1_nonoise_2'), fullfile(expt1_dir, 'expt1_nonoise_10'), [0.4 0.8], cache_file)
+for fi=r_plot_ringo_figures(fullfile(expt1_dir, 'expt1_nonoise_2'), fullfile(expt1_dir, 'expt1_nonoise_10'), [0.4 0.8], cache_file)
     figure(fi);
     [~,~,oh] = legend();
     title('Learning Trajectory (control)');
@@ -36,7 +36,7 @@ end;
 %% Time dependence: noise
 
 % % wrongly classified
-for fi=ringo_figures(fullfile(expt1_dir, 'expt1_noise_2_1'), fullfile(expt1_dir, 'expt1_noise_10_2'), [0.4 0.8], cache_file)
+for fi=r_plot_ringo_figures(fullfile(expt1_dir, 'expt1_noise_2_1'), fullfile(expt1_dir, 'expt1_noise_10_2'), [0.4 0.8], cache_file)
     figure(fi);
     title('Learning Trajectory (noise)');
     [~,~,oh] = legend();
