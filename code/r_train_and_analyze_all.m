@@ -67,15 +67,15 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
             datas{ni, di, ti} = datas{ni, di, ti}(built_idx);
 
             % Report some results
-            r_analyze_similarity(nets{ni, di, ti}, sims{ni, di, ti}, simstats{ni, di, ti}, loop_figs);
+            r_plot_similarity(nets{ni, di, ti}, sims{ni, di, ti}, simstats{ni, di, ti}, loop_figs);
 
         end;
     end; end; end; end;
 
     if ~isempty(summary_figs)
         r_plot_niters(nets, sims, niters, nexamples);
-        r_analyze_similarity_surfaces(nets, sims, simstats, summary_figs);
     end;
+    r_plot_similarity_surfaces(nets, sims, simstats, summary_figs);
 
     abc = dbstack;
     script_name = abc(end).name;

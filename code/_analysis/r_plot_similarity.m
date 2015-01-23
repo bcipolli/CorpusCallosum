@@ -1,4 +1,4 @@
-function r_analyze_similarity(nets, sim, simstats, figs)
+function r_plot_similarity(nets, sim, simstats, figs)
 
 
     if ~iscell(nets), nets = { nets }; end;

@@ -1,4 +1,4 @@
-function r_analyze_similarity_surfaces(nets, sims, simstats, figs)
+function r_plot_similarity_surfaces(nets, sims, simstats, figs)
 
 
     if ~iscell(nets), nets = { nets }; end;
@@ -11,13 +11,13 @@ function r_analyze_similarity_surfaces(nets, sims, simstats, figs)
 
     switch ndims_looped
         case 0, warning('No valid networks were trained, so no plots can be made.'); return;
-        case 1, r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dims{dims_looped}, 9); % 5=mean, 9=corr
-        case 2, fprintf('2D looping movie NYI\n');%r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs);
+        case 1, r_plot_similarity_surfaces_1D(nets, sims, simstats, figs, dims{dims_looped}, 9); % 5=mean, 9=corr
+        case 2, fprintf('2D looping movie NYI\n');%r_plot_similarity_surfaces_1D(nets, sims, simstats, figs);
         otherwise, error('NYI');
     end;
 
 
-function r_analyze_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_plotted)
+function r_plot_similarity_surfaces_1D(nets, sims, simstats, figs, dim, data_plotted)
 % When we vary on just one dimension, show as a surface plot vs. time
 
     if ~exist('data_plotted', 'var'), data_plotted = 5; end;
