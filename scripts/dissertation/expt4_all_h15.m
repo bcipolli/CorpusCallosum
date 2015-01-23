@@ -1,6 +1,6 @@
 clear globals variables;
 matlabpool open 4
-if ~exist('r_looper','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
+if ~exist('r_train_many','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
 if ~exist('matlabpool','file'), chunk_size = 1; else chunk_size = max(1,matlabpool('size')); end;
 
 parfor rseed=(289-1+[1:25])%chunk_size:25])
@@ -16,7 +16,7 @@ for dataset = {'asymmetric_symmetric', 'asymmetric_asymmetric', 'symmetric_asymm
     resname             = sprintf('%s_%s_n%d', dataset{1}, guru_iff(axon_noise==0, 'nonoise', 'noise'), net.sets.ncc);
     net.sets.dirname    = fullfile(net.sets.dirname, mfilename, resname);
 
-    r_looper(net, chunk_size)
+    r_train_many(net, chunk_size)
 end;
 end;
 end;

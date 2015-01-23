@@ -60,4 +60,4 @@ net.sets.noise_input      = 1E-6;%.001;%001;%1;
 net.sets.dirname = fullfile(guru_getOutPath('cache'), 'ringo', 'development', mfilename());
 
 
-r_looper(net, 25); % run 25 network instances
+r_train_many(net, 25); % run 25 network instances

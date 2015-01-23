@@ -35,7 +35,7 @@ function [nets, pats, datas, figs] = r_asymmetry_looper(template_net, nexamples,
         %net.sets.debug = false;
 
         % Train the network
-        [nets{ni, di, ti}{mi}, pats, datas{ni, di, ti}{mi}] = r_looper(net, 1);
+        [nets{ni, di, ti}{mi}, pats, datas{ni, di, ti}{mi}] = r_train_many(net, 1);
         nets{ni, di, ti}{mi} = nets{ni, di, ti}{mi}{1};
         datas{ni, di, ti}{mi} = datas{ni, di, ti}{mi}{1};
 

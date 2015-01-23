@@ -5,4 +5,4 @@ dbstop if error;
 net = dissertation_args();   % Noise level contained in args
 net.sets.dirname    = fullfile(net.sets.dirname, mfilename);
 
-r_looper(net, 25); % run 25 network instances
+r_train_many(net, 25); % run 25 network instances

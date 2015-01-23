@@ -1,5 +1,5 @@
-function [nets, pats, datas] = r_looper(net, n_nets)
-%function r_looper(net, n_nets)
+function [nets, pats, datas] = r_train_many(net, n_nets)
+%function r_train_many(net, n_nets)
 %
 % Loops over some # of networks to execute them.
 
