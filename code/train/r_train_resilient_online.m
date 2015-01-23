@@ -99,7 +99,7 @@ function [net,data] = r_train_resilient_online(net,pats)
     gradE_T = zeros(pats.tsteps,length(net.T));
 
 
-    if (ns.verbose), r_printPats(data); end;
+    if (ns.verbose), r_print_pats(data); end;
 
 
     %%%%%%%%%%%%%%

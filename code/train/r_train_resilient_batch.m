@@ -75,7 +75,7 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
     %%%%%%%%%%%%%%
     last_measure_ts = find(sum(sum(pats.s,3),2),1,'last'); % keep an index of the last measurement point
 
-    if (ns.verbose), r_printPats(data); end;
+    if (ns.verbose), r_print_pats(data); end;
 
     I(:,:,1:1+net.ninput) = pats.P;  %patterns defined for input nodes; I is for all nodes
     pcIter              = 1;       %iteration where a param change was made

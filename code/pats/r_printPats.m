@@ -1,4 +1,4 @@
-function r_printPats(data)
+function r_print_pats(data)
     
         fprintf('Patterns:\n');
         for i=1:data.npat
