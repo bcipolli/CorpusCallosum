@@ -1,4 +1,4 @@
-function [nets, pats, datas, figs] = r_asymmetry_looper(template_net, nexamples, nccs, delays, Ts, loop_figs, summary_figs, results_dir)
+function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexamples, nccs, delays, Ts, loop_figs, summary_figs, results_dir)
 %
 
     if ~exist('nexamples', 'var'), nexamples = 10; end;
