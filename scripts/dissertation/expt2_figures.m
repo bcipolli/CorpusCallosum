@@ -5,90 +5,90 @@ function fs=tdlc2013_figures(data_path, plots, intype, etype, cache_file)
 % cache_file: a pointer to the cache file; use IFF data_dir is not empty.
 %     Otherwise, specify the cache_file as the data_path (see above)
 
-if ~exist('r_out_path',     'file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
-if ~exist('guru_getOptPath','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','..','_lib'))); end;
+    if ~exist('r_out_path',     'file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','code'))); end;
+    if ~exist('guru_getOptPath','file'), addpath(genpath(fullfile(fileparts(which(mfilename)), '..','..','..','_lib'))); end;
 
-% default vars
-if ~exist('plots','var'),  plots     = [ 0 1 ]; end;
-if ~exist('intype','var'), intype = 'all'; end;
-if ~exist('etype', 'var'), etype  = 'clserr'; end;
-if ~exist('cache_file','var'), cache_file = ''; end;
+    % default vars
+    if ~exist('plots','var'),  plots     = [ 0 1 ]; end;
+    if ~exist('intype','var'), intype = 'all'; end;
+    if ~exist('etype', 'var'), etype  = 'clserr'; end;
+    if ~exist('cache_file','var'), cache_file = ''; end;
 
-% Determine the data directory, based on the setting of the data_path and cache_file
+    % Determine the data directory, based on the setting of the data_path and cache_file
 
-% cache file with no dir data; set dir_data to empty
-%   so that looper will know to load data from cache file
-if strcmp('.mat', guru_fileparts(data_path,'ext')) && isempty(cache_file)
-    cache_file = data_path;
-    if ~exist(cache_file,'file'), error('Could not find cache file: %s', cache_file); end;
-    data_dir = [];
-    
-% Fix path  
-elseif ~exist(data_path,'dir') && exist(fullfile(r_out_path('cache'), data_path), 'dir')
-    data_dir = fullfile(r_out_path('cache'), data_path);
+    % cache file with no dir data; set dir_data to empty
+    %   so that looper will know to load data from cache file
+    if strcmp('.mat', guru_fileparts(data_path,'ext')) && isempty(cache_file)
+        cache_file = data_path;
+        if ~exist(cache_file,'file'), error('Could not find cache file: %s', cache_file); end;
+        data_dir = [];
+        
+    % Fix path  
+    elseif ~exist(data_path,'dir') && exist(fullfile(r_out_path('cache'), data_path), 'dir')
+        data_dir = fullfile(r_out_path('cache'), data_path);
 
-else
-    data_dir = data_path
-end;
-    %if ~exist('cache_file', 'var'),cache_file= fullfile(r_out_path('cache'), 'tdlc2013_cache.mat'); end;
-
-[data, nts, noise, delay] = collect_data_looped_tdlc(data_dir, cache_file);
-if    isempty(data),               error('No data found at %s', data_dir);
-elseif ~exist(cache_file, 'file'), save_cache_data(cache_file); end;
-data = data(nts<75);
-noise = noise(nts<75);
-delay = delay(nts<75);
-nts   = nts(nts<75);
-
-
-ts = data{1}.ts;
-ts.all = unique(nts);
-
-%[allts,b,tsidx] = unique(nts);
-%[alld, ~,didx]  = unique(delay);
-%cidx = (noise==0);
-%nidx = (noise==1);
-
-fs = []; % output figure handles
-udelays = unique(delay);
-unoises = unique(noise);
-
-%% Learning trajectory (raw)
-if any(0<=plots & plots<1)
-    for d=udelays
-        lt_cdata = get_sub_data(data, noise==0 & delay==d, {[intype '.intact.' etype], [intype '.lesion.' etype]});
-        lt_ndata = get_sub_data(data, noise==1 & delay==d, {[intype '.intact.' etype], [intype '.lesion.' etype]});
-
-        % Raw learning; delay=d
-        if ismember(0, plots) || ismember(0.0, plots), fs(end+1) = plot_raw_learning0(lt_cdata,lt_ndata,ts,sprintf('err=%s (delay=%d)',etype,d)); end;
-        if ismember(0, plots) || ismember(0.1, plots), fs(end+1) = plot_raw_learning1(lt_cdata,lt_ndata,ts,sprintf('err=%s (delay=%d)',etype,d)); end;
-        if ismember(0, plots) || ismember(0.2, plots), fs(end+1) = plot_raw_learning2(lt_cdata,lt_ndata,ts,sprintf('err=%s (delay=%d)',etype,d)); end;
+    else
+        data_dir = data_path
     end;
-end;
+        %if ~exist('cache_file', 'var'),cache_file= fullfile(r_out_path('cache'), 'tdlc2013_cache.mat'); end;
 
-if any(1<=plots & plots<2)
-    for n=unoises
-        lt_nts       = nts(noise==n & delay==udelays(end));
+    [data, nts, noise, delay] = collect_data_looped_tdlc(data_dir, cache_file);
+    if    isempty(data),               error('No data found at %s', data_dir);
+    elseif ~exist(cache_file, 'file'), save_cache_data(cache_file); end;
+    data = data(nts<75);
+    noise = noise(nts<75);
+    delay = delay(nts<75);
+    nts   = nts(nts<75);
 
-        % Raw learning; delay=10 (classification error)
-        lt_data_fast = get_sub_data(data, noise==n & delay==udelays(1),   {[intype '.intact.' etype], [intype '.lesion.' etype]});
-        lt_data_slow = get_sub_data(data, noise==n & delay==udelays(end), {[intype '.intact.' etype], [intype '.lesion.' etype]});
-        if ismember(1, plots) || ismember(1.1, plots), fs(end+1) = plot_ringo_curves1(lt_data_fast, lt_data_slow,ts,lt_nts,sprintf('err=%s (%s, noise=%d)',etype,intype,n)); end;
-        if ismember(1, plots) || ismember(1.2, plots), fs(end+1) = plot_ringo_curves2(lt_data_fast, lt_data_slow,ts,lt_nts,sprintf('err=%s (%s, noise=%d)',etype,intype,n)); end;
+
+    ts = data{1}.ts;
+    ts.all = unique(nts);
+
+    %[allts,b,tsidx] = unique(nts);
+    %[alld, ~,didx]  = unique(delay);
+    %cidx = (noise==0);
+    %nidx = (noise==1);
+
+    fs = []; % output figure handles
+    udelays = unique(delay);
+    unoises = unique(noise);
+
+    %% Learning trajectory (raw)
+    if any(0<=plots & plots<1)
+        for d=udelays
+            lt_cdata = get_sub_data(data, noise==0 & delay==d, {[intype '.intact.' etype], [intype '.lesion.' etype]});
+            lt_ndata = get_sub_data(data, noise==1 & delay==d, {[intype '.intact.' etype], [intype '.lesion.' etype]});
+
+            % Raw learning; delay=d
+            if ismember(0, plots) || ismember(0.0, plots), fs(end+1) = plot_raw_learning0(lt_cdata,lt_ndata,ts,sprintf('err=%s (delay=%d)',etype,d)); end;
+            if ismember(0, plots) || ismember(0.1, plots), fs(end+1) = plot_raw_learning1(lt_cdata,lt_ndata,ts,sprintf('err=%s (delay=%d)',etype,d)); end;
+            if ismember(0, plots) || ismember(0.2, plots), fs(end+1) = plot_raw_learning2(lt_cdata,lt_ndata,ts,sprintf('err=%s (delay=%d)',etype,d)); end;
+        end;
     end;
-end;
 
-% 
-% if any(2<=plots & plots<3)
-%     for n=unoises
-%         lt_nts       = nts(noise==n & delay==udelays(end));
-% 
-%         % Raw learning; delay=10 (classification error)
-%         lt_data_fast = get_sub_data(data, noise==n & delay==udelays(1),   {[intype '.intact.' etype], [intype '.lesion.' etype]});
-%         lt_data_slow = get_sub_data(data, noise==n & delay==udelays(end), {[intype '.intact.' etype], [intype '.lesion.' etype]});
-%         if ismember(2, plots) || ismember(2.1, plots), fs(end+1) = plot_ringo_curves_normd(lt_data_fast, lt_data_slow,ts,lt_nts,sprintf('err=%s (%s, noise=%d)',etype,intype,n)); end;
-%     end;
-% end;
+    if any(1<=plots & plots<2)
+        for n=unoises
+            lt_nts       = nts(noise==n & delay==udelays(end));
+
+            % Raw learning; delay=10 (classification error)
+            lt_data_fast = get_sub_data(data, noise==n & delay==udelays(1),   {[intype '.intact.' etype], [intype '.lesion.' etype]});
+            lt_data_slow = get_sub_data(data, noise==n & delay==udelays(end), {[intype '.intact.' etype], [intype '.lesion.' etype]});
+            if ismember(1, plots) || ismember(1.1, plots), fs(end+1) = plot_ringo_curves1(lt_data_fast, lt_data_slow,ts,lt_nts,sprintf('err=%s (%s, noise=%d)',etype,intype,n)); end;
+            if ismember(1, plots) || ismember(1.2, plots), fs(end+1) = plot_ringo_curves2(lt_data_fast, lt_data_slow,ts,lt_nts,sprintf('err=%s (%s, noise=%d)',etype,intype,n)); end;
+        end;
+    end;
+
+    % 
+    % if any(2<=plots & plots<3)
+    %     for n=unoises
+    %         lt_nts       = nts(noise==n & delay==udelays(end));
+    % 
+    %         % Raw learning; delay=10 (classification error)
+    %         lt_data_fast = get_sub_data(data, noise==n & delay==udelays(1),   {[intype '.intact.' etype], [intype '.lesion.' etype]});
+    %         lt_data_slow = get_sub_data(data, noise==n & delay==udelays(end), {[intype '.intact.' etype], [intype '.lesion.' etype]});
+    %         if ismember(2, plots) || ismember(2.1, plots), fs(end+1) = plot_ringo_curves_normd(lt_data_fast, lt_data_slow,ts,lt_nts,sprintf('err=%s (%s, noise=%d)',etype,intype,n)); end;
+    %     end;
+    % end;
 
 
 function [d] = get_sub_data(data, idx, propname)
