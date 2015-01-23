@@ -1,4 +1,4 @@
-function [net,pats,data, ex] = r_train_one(net,pats,data,handle_exception)
+function [net, pats, data, ex] = r_train_one(net, pats, data, handle_exception)
 %
     if ~exist('pats', 'var'), pats = []; end;
     if ~exist('data', 'var'), data = []; end;
@@ -22,9 +22,11 @@ function [net,pats,data, ex] = r_train_one(net,pats,data,handle_exception)
         end;
 
         % Train the network
-        fprintf('Training [autoencoder=%d] network with tsteps=%d, max_del=%d, ncc=%d, to tc=%4.2f\n', ...
-                 (isfield(net.sets, 'autoencoder') && net.sets.autoencoder), ...
-                 net.sets.tsteps, max(net.sets.D_CC_INIT(:)), net.sets.ncc, net.sets.train_criterion);
+        fprintf('Training [autoencoder=%d] network with seed=%d, tsteps=%d, max_del=%d, ncc=%d, T=%.1f to tc=%4.2f\n', ...
+                (isfield(net.sets, 'autoencoder') && net.sets.autoencoder), ...
+                net.sets.rseed, ...
+                net.sets.tsteps, max(net.sets.D_CC_INIT(:)), net.sets.ncc, ...
+                max(net.sets.T_INIT(:)), net.sets.train_criterion);
 
         if isempty(data)
           [net,data] = net.fn.train(net,pats.train);
