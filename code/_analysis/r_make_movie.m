@@ -56,7 +56,7 @@ function mv = r_make_movie(net, y, pat, outfile)
     
 function F = r_make_movie_le(net, y, pat, col_fn, tdelay)
     %
-    im = rgb2gray(imrotate(imread(fullfile(fileparts(which(mfilename)), 'lewis-elman.png')),-0.0));
+    im = rgb2gray(imrotate(imread(fullfile(fileparts(which(mfilename)), 'img/lewis-elman.png')),-0.0));
     %im = imrotate(im, 0.1);
     im = min(1, 1 - double(im)./255 + 0.05);
 
@@ -197,7 +197,7 @@ function F = r_make_movie_ringo(net, y, pat, col_fn, tdelay)
 
 
     %
-    im = rgb2gray(imrotate(imread(fullfile(fileparts(which(mfilename)), 'ringo.png')),-0.0));
+    im = rgb2gray(imrotate(imread(fullfile(fileparts(which(mfilename)), 'img/ringo.png')),-0.0));
     %im = imrotate(im, 0.1);
     im = min(1, 1 - double(im)./255 + 0.20);
 
