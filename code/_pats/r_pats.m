@@ -32,7 +32,7 @@ function [pats] = r_pats(net)
 
         % Train the autoencoder!
         else
-            [net.ac,pats_ac,data_ac] = r_main(net.ac);
+            [net.ac,pats_ac,data_ac] = r_train_one(net.ac);
         end;
 
         % Run the autoencoder encodings

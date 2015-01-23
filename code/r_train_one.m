@@ -1,4 +1,4 @@
-function [net,pats,data, ex] = r_main(net,pats,data,handle_exception)
+function [net,pats,data, ex] = r_train_one(net,pats,data,handle_exception)
 %
     if ~exist('pats', 'var'), pats = []; end;
     if ~exist('data', 'var'), data = []; end;

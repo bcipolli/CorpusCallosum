@@ -80,7 +80,7 @@ for mi=nmodels:-1:1
                 % Run simulation
                 else
                     fprintf('Making %s...\n', net.sets.matfile);
-                    r_main(net);
+                    r_train_one(net);
                 end;
             end; 
         end;

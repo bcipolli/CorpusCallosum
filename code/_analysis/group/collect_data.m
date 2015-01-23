@@ -330,7 +330,7 @@ function [an,sets] = collect_data(dirname, resave)
                   net.continue=true;
                   net.sets.axon_noise=0;
 
-                  [net,pats_new,data_new] = r_main(net);
+                  [net,pats_new,data_new] = r_train_one(net);
                   data    = r_test(net, pats, data);
                   data.an = r_analyze(net, pats, data);
                   if resave,

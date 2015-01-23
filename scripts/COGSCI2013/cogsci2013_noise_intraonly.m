@@ -55,5 +55,5 @@ net.sets.noise_init       = 0;%.001;%1;
 net.sets.noise_input      = 1E-4;%.001;%001;%1;
 
 %
-[net,pats,data]          = r_main(net);
+[net,pats,data]          = r_train_one(net);
 [data.an]                = r_analyze(net, pats, data);

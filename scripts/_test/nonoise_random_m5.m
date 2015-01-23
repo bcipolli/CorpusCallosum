@@ -77,7 +77,7 @@ for s=(288+[1:25])
 %   try
     for hi=1:10
       traj = 
-     [net,pats,data]          = r_main(net);
+     [net,pats,data]          = r_train_one(net);
      [data.an]                = r_analyze(net, pats, data);
      unix(['mv ' net.sets.matfile ' ./' dirname]);
 %   catch

@@ -65,7 +65,7 @@ for s=(288+[1:25])
 
    net.sets.rseed = s;
    try
-     [net,pats,data]          = r_main(net);
+     [net,pats,data]          = r_train_one(net);
      [data.an]                = r_analyze(net, pats, data);
      unix(['mv ' net.sets.matfile ' ./' dirname]);
    catch

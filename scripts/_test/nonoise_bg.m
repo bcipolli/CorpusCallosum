@@ -93,9 +93,9 @@ for s=(288+[1:25])
 
        fprintf('Running %s\n', matfile);
        if ~exist('pats','var')
-         [net,pats,data]          = r_main(net);
+         [net,pats,data]          = r_train_one(net);
        else
-         [net,pats,data]          = r_main(net,pats,data);
+         [net,pats,data]          = r_train_one(net,pats,data);
        end;
        [data.an]                = r_analyze(net, pats, data);
        unix(['mv ' net.sets.matfile ' ./' dirname]);

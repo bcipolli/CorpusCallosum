@@ -49,7 +49,7 @@ function [net, pats, data] = r_dummy(sets, rseed)
 
     %
     if ~exist(net.sets.dirname,'dir'), mkdir(net.sets.dirname); end;
-    [net,pats,data,ex]          = r_main(net, [], [], guru_getfield(net.sets, 'debug', true));  % handle exception
+    [net,pats,data,ex]          = r_train_one(net, [], [], guru_getfield(net.sets, 'debug', true));  % handle exception
     if isempty(ex)
         [data.an]                = r_analyze(net, pats, data);
         %unix(['mv ' net.sets.matfile ' ./' net.sets.dirname]);

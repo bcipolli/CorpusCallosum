@@ -85,7 +85,7 @@ net.sets.ac.grad_pow        = 3;
 
 % Initialize the full model, but don't train
 %net.sets.niters          = 0;
-%[net] = r_main(net);
+%[net] = r_train_one(net);
 
 % Train without CC cxns
 %net_nocc                           = net;
@@ -93,13 +93,13 @@ net.sets.ac.grad_pow        = 3;
 %net_nocc.wC                        = net_nocc.cC;
 %net_nocc.w                         = net_nocc.w.*net_nocc.cC;
 %net_nocc.sets.niters               = 0;
-%[net_nocc, pats_nocc, data_nocc]   = r_main(net_nocc);
+%[net_nocc, pats_nocc, data_nocc]   = r_train_one(net_nocc);
 %[data.an]                          = r_analyze(net_nocc, pats_nocc, data_nocc);
 
 % Now continue training with CC
 %net.w(find(net_nocc.w)) = net_nocc.w(find(net_nocc.w));
 %net.sets.niters          = 500;
-[net,pats,data]          = r_main(net);
+[net,pats,data]          = r_train_one(net);
 [data.an]                = r_analyze(net, pats, data);
 
 

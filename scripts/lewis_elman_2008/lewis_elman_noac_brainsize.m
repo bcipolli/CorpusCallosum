@@ -18,7 +18,7 @@ while Sdel<(tsteps-5)
     
     net.sets.S_LIM  = net.sets.tstop -net.sets.dt*(Sdel +[Sdur 0]);  % min & max time to consider error
 
-    [net,pats,data]          = r_main(net);
+    [net,pats,data]          = r_train_one(net);
     [data.an]                = r_analyze(net, pats, data);
 end;
 
