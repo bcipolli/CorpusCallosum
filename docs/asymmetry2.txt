@@ -1,0 +1,94 @@
+Idea:
+* Asymmetry is a balance between tight interhemispheric coupling, where shared activity make representations more similar,
+and efficient use of resources, where initial random biases can lead towards representations using different types of features.
+
+* Asymmetry can emerge spontaneously, but these same rules come into account when latent asymmetries occur--accounting both for how
+asymmetry exists when interhemispheric communication is weak, and how asymmetry is strengthened when interhemispheric communication
+comes online.
+
+Expected results:
+* Asymmetry is greater when delay is longer (cannot be explained only by anticipation, as each side must be anticipating the other).
+* Asymmetry is greater when
+
+Notes:
+* If interhemispheric transfer is itself asymmetric, then asymmetry can also occur simply due to asymmetry in the effects of anticipation.  The one hemisphere lagging the other should anticipate what the other is doing.  Prediction: the communicating hemisphere should operate on a faster time-scale (to anticipate faster?).  Could be not just that RH passes info to the left, but perhaps that the LH actively inhibits / controls the right.
+
+In recent
+
+
+
+
+
+Ideas:
+* INTRA patterns converge before INTER patterns.
+* lots of asymmetry when unconstrained
+* plenty of asymmetry when a single pass to solve.
+* less asymmetry with multiple passes
+
+why do we see asymmetry?
+* slow fibers mean fewer passes, less representational mixing
+
+
+
+akshwad.  1st year masters student singapore nanyang, computer engineering.  saliency.
+vishal, 3rd year undergrad, (CSE minoring in math)
+thomas, regents scholar research program?  latin
+sandy?
+kashib, 2nd year masters student (neural networks)
+angel, 1st year masters student, ucla applied math
+cse, goal of project: NMR images of molecules, look at the images and try to predict whether we've seen the molecule before.
+
+
+
+left and right sides of the brain are mostly separated.  they're also different.
+
+what about how the cells connect makes them different?
+over development
+
+
+
+
+name
+level (MA, undergrad)
+where from?
+
+
+
+
+face recognition
+
+[35    32    61]
+
+[tsteps npats [bias + activations]]
+
+
+%% Show a network movie as it evolves towards expected outputs.
+
+% Compare that unit's activity for current pattern vs. all others (a row/column of similarity matrix)
+y(ti, :, ui) vs.
+
+% Compare that similarity row to the *actual* similarity row.
+
+% (can show which patterns it's getting right/wrong)
+% (can show on average how well it is discriminating the current pattern vs. all others)
+
+
+% Pass to the movie maker.
+
+
+
+%% Q: how well does the RH activity of each unit predict RH (vs. LH) output?
+%% How to visualize: 3 plots:
+%% 1. How well RH/LH activity predicts LH output
+%% 2. difference of predictabilities.
+%% 3. How well RH/LH activity predicts RH output
+
+%% Note: when outputting the same thing, difference will be zero :(
+
+%% Compute RH & LH prediction of LH output (per unit)
+%  Take a unit's activity for all patterns and multiply by the activity for the current pattern; this is the unit's "similarity" pattern
+%  Compute the LH output similarity matrix
+%  For each pattern, take the similarity row and dot with the unit's similarity (i.e. repmat the unit's activity) to compute the similarity / prediction for that
+pat_sim = (y(ti, pi, ui)./sqrt(sum(y(ti, :, :).^2))).^2; square of the unit-vectored activation for the given unit
+
+

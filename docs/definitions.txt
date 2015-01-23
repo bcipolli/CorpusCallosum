@@ -1,0 +1,69 @@
+glossary:
+parity - parity task
+parity_and_shift - each side learns both tasks, and are always doing the same task.
+parity_or_shift - each side learns both tasks, the other could be doing either task.
+parity_vs_shift - each side learns both tasks, but one is always doing the opposite of the other.
+parity_shift - LH learns parity, RH learns shift
+
+To analyze:
+* See how asymmetry is affected by callosal lesioning
+* See how manipulations affect # training iterations / other training parameters
+* Check if any effects are due to incomplete training.
+
+
+To run:
+* See how asymmetry is related to noise (independence)
+
+be truthful.  Not sharing things, not straight.
+
+
+
+Asymmetry is:
+* dynamic
+* a 3-way interaction between task demands, delays, and ncc
+
+low task demands show varying degrees of asymmetry, based on delays and ncc
+high task demands show more consistent levels of asymmetry
+
+question: does it depend on just the task, or all things learned (e.g. parity under parity, parity_and_shift, parity_vs_shift, parity_or_shift)
+
+
+Another things for us to investigate, using DTI, distances between callosal fiber tracts vs. intrahemispheric fiber tracts.
+
+============
+
+ringo model tests:
+intra- vs. inter-hemispheric - difference in minimum time to respond?
++ just have one type of pattern, and see how far back the minimum response time can be made.
++ should we set T=1 (for rise/fall time of leaky integrator?)  Probably T=5 is good (use past and present information)
+
+
+things to show:
+
+1. create a large population of networks.
+2. collate them (copy from other scripts)
+3.
+
+What do I want to know?
+
+Does communication enhance or suppress asymmetry?
+
+How to test?
+
+D=1, D=10, test representational asymmetry.  Should be precisely the same, but delayed.
+D=1, D=inf;
+N=2, N=5, N=8; show increasing communication increases asymmetry.
+
+Problem: greater mixing also could cause more similar representations.
+
+So, perhaps there's a u-shape: more fibers lead to less independence and therefore specialization.
+
+Perhaps the increasing function may help too.
+
+
+
+so to do:
+symmetric_symmetric with N=2,N=5,N=8,etc.
+  how to deal with computational differences?
+
+

@@ -1,0 +1,99 @@
+TO DO:
+* Test a lot of same input, same/different output.
+* NEED two tasks where I give different inputs, and I get the same output.
+  THEN, ask... which asymmetry is greater?
+
+
+
+
+
+Things I want to know:
+* Weight magnitude, activation magnitude, of interhemispheric connections
+* # of training iterations
+* Asymmetry over time
+
+Situations I want to know them in:
+* Single task, each hemisphere executing independently, same task (asymmetry_parity)
+ - vary over NCC, D, T (to characterize fully)
+
+* Single task, each hemisphere executing independently, different tasks (asymmetry_parity_shift)
+ - No variation, just measure once to compare learning and asymmetry.
+
+* Single task, each hemisphere depending on the other (asymmetry_parity_dual).
+  - vary over all
+
+* Dual task, predictable other task (asymmetry_parity_and_shift)
+  - vary ... over all?
+
+* Dual task, not predictable other task (asymmetry_parity_or_shift)
+  - vary over all.
+
+
+=========
+= Results
+=========
+
+For parity_and_shift (both networks do both tasks, but if one does one, the other does the other), asymmetry increases with ncc.
+
+=========
+
+What I want to measure.
+
+Base measure: mean abs(difference) => asymmetry, std(abs(difference))
+* distance from input and output similarity matrices.
+
+
+Comparisons:
+* Measure of asymmetry as a function of NCC (0:20)
+* Measure of asymmetry as a function of same/different task (note: can mix
+  - compare raw similarities (doing different tasks) and while doing same task.
+
+Asymmetry: euclidean distance between the vector versions of the similarity matrices.
+
+
+averaged over instances, plots
++
++
++
+
+
+how to write it:
+
+* have a loop over NCC, or over task.
+* collect the data, store in matrices.
+* Create new plot functions, copy code where necessary.
+
+=========
+
+Findings (for parity tasks, predictable collaboration):
+* Asymmetry rises to the SAME LEVEL at all delays.
+* Asymmetry is DYNAMICALLY REDUCED as a function of delay
+* ALL delays and asymmetries are capable to solve the task fully.
+
+Interpretations:
+* Overall asymmetry is not affected by conduction delay.
+* Dynamic suppression of asymmetry at output time is dependent on the fading gradient
+
+Notes:
+* We encourage interhemispheric communication a lot, by having predictable cross-hemispheric tasks
+* However, we do not require it, by not having interhemispheric patterns.
+
+=========
+
+check on the # of training iterations.  interference when tasks are different, regardless of delays long or short.
+
+5 things that any brain-dead neural network person would guess:
+1. The network learns more slowly (training iterations to criterion higher) when the settle time does not allow interhemispheric communication (duh, those parameters cannot be used, AND there is shared information!
+2. The network learns more slowly (training iterations are higher) when the tasks on the two sides differ, IRRESPECTIVE OF DELAY.
+3. Asymmetry appears whether tasks are the same or different, IRRESPECTIVE OF DELAY.
+4.
+
+activations of units are typically very high when # units low and task is the same--they are being used heavily.
+
+
+What I see:
+* As delay increases, the time at which hidden unit similarity goes to match output similarity is *also* delayed.
+* asymmetry is independent of delays, but it is dependent on processing time--must have enough time to fully mix across the CC.  Likely depends on T (rise & fall time of leaky integrator)
+* asymmetry is high with different tasks... but cc neurons are less asymmetric, and MAY BE similar to asymmetry in the *same* task...
+* INTERESTINGLY, asymmetry is suppressed in callosally-projecting vs. pure intrahemispheric cells.
+
