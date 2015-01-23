@@ -66,7 +66,7 @@ for rseed=(289-1+[1:chunk_size:25])
           net.sets = sets;
         
           net.sets.tstart = 0;
-          net.sets.tsteps = tsteps  ;%we'll add another hidden layer, so measure output at one step later
+          net.sets.tsteps = tsteps  ;%we''ll add another hidden layer, so measure output at one step later
           net.sets.tstop  = net.sets.tsteps * net.sets.dt;
           net.sets.I_LIM  = net.sets.tstart+net.sets.dt*(Idel +[0 Idur]); %in terms of time, not steps
           net.sets.S_LIM  = net.sets.tstop -net.sets.dt*(Sdel +[Sdur 0]);  % min & max time to consider error
@@ -87,7 +87,7 @@ end;
   % Make into one giant cache
   cache_dir         = guru_fileparts(fileparts(net.sets.dirname), 'name');
   cache_file        = fullfile(cache_dir, [mfilename '.mat']);
-  [~,~,~,~,folders] = collect_data_looped_tdlc( cache_dir );
+  [~,~,folders] = collect_data_looped( cache_dir );
   
   make_cache_file(folders, cache_file);
 

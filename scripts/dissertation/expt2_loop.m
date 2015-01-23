@@ -40,7 +40,7 @@ end;
   % Make into one giant cache
   cache_dir         = guru_fileparts(fileparts(net.sets.dirname), 'name');
   cache_file        = fullfile(cache_dir, [mfilename '.mat']);
-  [~,~,~,~,folders] = collect_data_looped_tdlc( cache_dir );
+  [~,~,folders] = collect_data_looped_tdlc( cache_dir );
 
   make_cache_file(folders, cache_file);
 
