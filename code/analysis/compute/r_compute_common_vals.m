@@ -1,7 +1,5 @@
 function vals = compute_common_vals(nets, sims, unique_values)
-    if ~exist('unique_values', 'var')
-        unique_values = true;
-    end;
+    if ~exist('unique_values', 'var'), unique_values = true; end;
 
     good_idx = find(cellfun(@(c) ~isempty(c), nets));
 
@@ -10,6 +8,7 @@ function vals = compute_common_vals(nets, sims, unique_values)
         return;
     end;
 
+    vals = struct();
     sim = sims{good_idx(1)}{1};
     net = nets{good_idx(1)}{1};
 
@@ -33,6 +32,22 @@ function vals = compute_common_vals(nets, sims, unique_values)
     end;
 
     vals.max_iters = net.sets.niters;
+
+    % Documentation & filtering; the ordering is a centralized assumption
+    %   that is implemented in r_train_many
+    %
+    % NOTE that these will be filtered below.
+    vals.dims.ids = {'ncc', 'delays', 'Ts'};
+    vals.dims.names = {'# Connections', 'Delay', 'Time Constant'};
+
+    % Which dimensions were varied?
+    dim_idx = cellfun( @(dim) length(unique(vals.(dim))) > 1, vals.dims.ids);
+    vals.dims.nvaried = sum(dim_idx);
+    %guru_assert(vals.dims.nvaried > 0, 'SOME simulations should remain!');
+
+    vals.dims.ids = vals.dims.ids(dim_idx);
+    vals.dims.names = vals.dims.names(dim_idx);
+
 
 
 function val = getSet(nets, set)

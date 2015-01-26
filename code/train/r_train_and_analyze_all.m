@@ -51,7 +51,7 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     %% Analyze the networks and massage the results
     for ci=1:numel(nets)
         % Combine the results
-        [sims{ci}, simstats{ci}, niters{ci}, idx] = r_group_analyze(nets{ci}{1}.sets, datas{ci});
+        [sims{ci}, simstats{ci}, idx] = r_group_analyze(nets{ci}{1}.sets, datas{ci});
 
         % Filter the results to only good results
         nets{ci} = nets{ci}(idx.built);
@@ -61,10 +61,14 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
         r_plot_similarity(nets{ci}, sims{ci}, simstats{ci}, loop_figs);
     end;
 
+    % compute
+    vals = r_compute_common_vals(nets, sims, false);
+    if isempty(vals), return; end;
+
     % Plot some summary figures
-    r_plot_niters(nets, sims, niters, nexamples, summary_figs);
-    %r_plot_interhemispheric_surfaces(nets, datas, summary_figs);
-    r_plot_similarity_surfaces(nets, sims, simstats, summary_figs);
+    r_plot_training_figures(nets, datas, vals, nexamples, summary_figs);
+    r_plot_interhemispheric_surfaces(nets, datas, vals, summary_figs);
+    r_plot_similarity_surfaces(nets, vals, simstats, summary_figs);
 
     guru_saveall_figures( ...
         figures_output_dir, ...
@@ -74,6 +78,9 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
 
 
 function net = set_net_params(template_net, ncc, delay, T, mi)
+    % Helper function to set net parameters; this complains if
+    %   done in a parfor loop
+
     % set params
     net = template_net;
     net.sets.ncc = ncc;
@@ -101,75 +108,3 @@ function [sims, simstats, idx] = r_group_analyze(sets, datas)
     sims         = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
     simstats_tmp = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
     simstats     = mean(cat(5, simstats_tmp{:}), 5);
-
-
-function r_plot_niters(nets, sims, niters, nexamples)
-    dims = {'delays', 'ncc', 'Ts'};
-    dims_verbose = {'Delay', '# Connections', 'Time Constant'};
-
-    vals = r_compute_common_vals(nets, sims);
-    guru_assert(~isempty(vals), 'SOME simulations should be good!');
-
-    dim_idx = cellfun( @(dim) length(unique(vals.(dim))) > 1, dims);
-    ndims_varied = sum(dim_idx);
-    guru_assert(ndims_varied > 0, 'SOME simulations should remain!');
-    guru_assert(ndims_varied <= 2, 'Can''t handle more than 2 dims currently!');
-
-    pct_completed_models = cellfun(@(n) 100*length(n) / nexamples, niters);
-    guru_assert(pct_completed_models > 0, 'SOME simulations should be OK!');
-
-    % Number of iterations
-    figure;
-    switch ndims_varied % # non-singular values (i.e. was iterated)
-        case 1
-            dim = dims{dim_idx};
-            errorbar(vals.(dim), cellfun(@(n) nanmean(n), niters), cellfun(@(n) nanstd(n), niters));
-            xlabel(dims{dim_idx}); ylabel('# iterations');
-        case 2
-            surf(vals.(dims{1}), vals.(dims{2}), cellfun(@(n) nanmean(n), niters));
-            xlabel(dims_verbose{1}); ylabel(dims_verbose{2}); zlabel('% models');
-
-        otherwise, error('NYI');
-    end;
-    set(gca, 'FontSize', 16);
-    title('# iterations.');
-    set(gcf, 'name', 'niters');
-
-    % Number of trained models
-    figure;
-    switch ndims_varied % # non-singular values (i.e. was iterated)
-        case 1
-            dim = dims{dim_idx};
-            bar(vals.(dim), pct_completed_models);
-            xlabel(dim); ylabel('% models');
-            set(gca, 'ylim', [0 100]);
-        case 2
-            surf(vals.(dims{1}), vals.(dims{2}), pct_completed_models);
-            xlabel(dims_verbose{1}); ylabel(dims_verbose{2}); zlabel('% models');
-            set(gca, 'zlim', [0 100]);
-
-        otherwise, error('NYI');
-    end;
-    set(gca, 'FontSize', 16);
-    title('% models trained.');
-    set(gcf, 'name', 'ntrained');
-
-
-
-function r_report_training(nets, niters)
-    fprintf('Training iters (%2d del, %2d ncc): %.1f +/- %.1f\n', max(nets{1}.sets.D_CC_INIT(:)),nets{1}.sets.ncc, nanmean(niters), nanstd(niters));
-
-
-function [net, data] = r_mark_missing_data(net, pats, data)
-    guru_assert(isfield(data, 'actcurve'), 'actcurve not in data!');
-
-    % Will propagate data to cell array.
-    fprintf('Computing similarity...')
-    [data.an.sim, data.an.simstats] = r_compute_similarity(net, pats);
-
-    % Hack to make things work A LOT FASTER
-    outfile = fullfile(net.sets.dirname, net.sets.matfile);
-    fprintf(' re-saving to %s ...', outfile);
-    save(outfile, 'net', 'pats', 'data');
-    fprintf(' done.\n');
-
