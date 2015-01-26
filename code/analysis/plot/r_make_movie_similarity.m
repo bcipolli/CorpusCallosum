@@ -109,7 +109,7 @@ function r_make_movie_similarity(nets, pats, sims, xform)
                 if ~isempty(patsim)
                     imagesc(squareform(patsim), [-2 2]);
                 end;
-                if any(abs(patsim) > 2), keyboard; end;
+                guru_assert(all(abs(patsim) <= 2);
 
                 axis square;
                 set(gca, 'xtick', [], 'ytick', []);

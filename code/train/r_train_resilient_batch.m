@@ -136,7 +136,6 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
                     cc_axon_noise = axon_noise(:,:,net.idx.cc);
                     avg_axon_noise = sum(abs(cc_axon_noise(:))) / nnz(cc_axon_noise);%pats.npat / length(net.idx.cc);
                     fprintf('Average noise per pattern per synapse: %.2e = %.2f%% of mean, %.2f%% variance of cc activation\n', avg_axon_noise, 100 * avg_axon_noise / avg_cc_act, 100 * avg_axon_noise / std_cc_act);
-                    %keyboard;
                 end;
 
                 x(ti,:,:)   = sum(w_repd .* (y_d + axon_noise), 2);  % finally add in the noise
@@ -231,7 +230,7 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
 %                            if (fpxz_d(1,p,i,j) ~= fpx_d(p,i,j)*z_d(p,i,j)), error('fpxz_d'); end;
 %                            if (T_rrepd(1,p,i,j) ~= T_repd(1,p,j)), error('T_rrepd'); end;
 %                        if (gradE_w(ti,p,i,j) - gradE_wij_t > 1E-10)
-%                                keyboard;
+%                                error('NYI');
 %                        end;
 %                    end;
 %                end;
@@ -271,8 +270,6 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
         end;
 
         % Do some reporting
-        %if isnan(data.E_iter(iter)), keyboard; end;
-
         if (mod(iter,ns.test_freq)==0)
             fprintf('Err=%6.2e; (%4.1f%% bt ) maxdiff=(%4.3f);', ...
                     data.E_iter(iter), ...
@@ -357,7 +354,7 @@ function [net,data] = r_train_resilient_batch(net,pats,data)
         few_bad_delay_changes  = length(find(etaD_toch)) <= (ns.bad_pct_D)*numel(v_D);
 
         data.good_update(iter) = less_error && 1<=sum(few_bad_weight_changes + few_bad_tc_changes + few_bad_delay_changes);
-       % if ~data.good_update(iter), keyboard; end;
+
         %
         if (~data.good_update(iter))
             fprintf(' *** ');

@@ -116,7 +116,6 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
 
                 if ~all(isnan(patsim_asymmetry)) && ~isnan(patsim_asymmetry_corr) && (diff_sign || diff_mag)
                     %fprintf('\n%2d: %s corr & avg differ %.2f vs %.2f\n', ti, loc, (1-patsim_asymmetry_corr), mean(abs(patsim_asymmetry)));
-                    %keyboard;
                 end;
 
                 switch pat_types{pti}

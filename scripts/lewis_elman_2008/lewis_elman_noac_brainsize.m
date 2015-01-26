@@ -1,5 +1,5 @@
 % First time to run the script
-keyboard
+error('NYI');
 if (~exist('net','var') || ~isfield(net.sets,'continue') || ~net.sets.continue)
     net.sets.run = false
     net.sets.continue=true;

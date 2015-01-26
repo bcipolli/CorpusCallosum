@@ -15,7 +15,7 @@ dirs_d2_noise    = dir(fullfile(guru_getOutPath('cache'), [prefix '-*ts-2dn']));
 dirs_d10_noise   = dir(fullfile(guru_getOutPath('cache'), [prefix '-*ts-10dn']));
 
 [data,ts] = summarize_files(dirs_d2_nonoise, prefix);
-keyboard
+error('NYI');
 
 function [data,ts] = summarize_files(dirs, prefix)
     ts = guru_csscanf({dirs.name}, [prefix '-%dts']);

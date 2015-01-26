@@ -117,7 +117,6 @@ function [an,sets] = collect_data(dirname, resave)
         an.inter.lesion.clserr(bi,1:size(diff_lesion,1)) = mean(mean( diff_lesion(:,pats.idx.inter,:)>=net.sets.train_criterion, 3),2);
     end;
     an.all.lesion.clserr(bi,1:size(diff_lesion,1))   = mean(mean( diff_lesion(:,:,:)>=net.sets.train_criterion, 3),2);
-    %if bi == 25, keyboard;end;
 
     % ????
     if has_intra
@@ -211,7 +210,7 @@ function [an,sets] = collect_data(dirname, resave)
 %
 %         b.data.hu_lesion
 %         b.data.hu_pat(an.ts.lesion(ti))
-%         keyboard;
+%
 %         sum_act = sum(sum(b.data.hu_lesion, 3), 2);  % sum over everything but time
 %         act = squeeze(b.data.lesion.y(end,:,:));
 %

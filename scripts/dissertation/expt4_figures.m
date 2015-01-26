@@ -41,12 +41,9 @@ function [fh] = expt4_figures(force)
             set(gcf, 'Name', sprintf('%s-%s', datasets{d1}, guru_iff(fignum == 3.2, 'intra', 'inter')));
             set(gcf, 'Position', [440   189   815   589]);
         end;
-        %keyboard
     end;
     %return;
 
-    %keyboard
-%
 %     %% Show the effect of #cc within a dataset
 %     for d1=1:length(datasets)
 %         ncc0_dir = sprintf('%s_nonoise_n0',datasets{d1});
@@ -87,7 +84,6 @@ function [fh] = expt4_figures(force)
             end;
         end;
     end;
-%keyboard;
 
     %% Compare different datasets, with noise
     for d1=1:length(datasets)

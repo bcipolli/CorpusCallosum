@@ -44,7 +44,7 @@ function r_plot_similarity_surfaces_2D(nets, vals, simstats, data_plotted, figs)
 
     % We want to get a single number about asymmetry.
     %   Currently, we have a number at each timestep.
-    %   Let`s get a number at 1/3, 2/3, and 3/3 of the
+    %   Let's get a number at 1/3, 2/3, and 3/3 of the
     %   tSteps.
     times = linspace(0, vals.tsteps, 4);
     times = round(times(2:end));

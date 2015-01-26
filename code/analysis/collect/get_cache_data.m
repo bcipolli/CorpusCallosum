@@ -37,7 +37,6 @@ function [data,ts,sets] = get_cache_data(dirs, cache_file, force_load)
 
     % Add extension to the cache file
     if ~isempty(cache_file) && ~strcmp('.mat', guru_fileparts(cache_file, 'ext'))
-    keyboard
         cache_file = [cache_file '.mat'];
     end;
 

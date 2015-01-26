@@ -50,5 +50,4 @@ function [data] = r_analyze_de_1D(net,pats,d)
     fprintf('\tLVF L+S-: LH=%5.2e vs [RH=%5.2e]\n', mean(squeeze((d.lesion.E(end,pats.idx.lvf&pats.idx.lc&~pats.idx.gl,:))))); %LH/local
     fprintf('\tLVF L-S+: LH=%5.2e vs [RH=%5.2e]\n', mean(squeeze((d.lesion.E(end,pats.idx.lvf&~pats.idx.lc&pats.idx.gl,:))))); %LH/local
 
-    %keyboard
     return;

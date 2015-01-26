@@ -105,15 +105,6 @@ if any(3<=plots & plots<4)
 end;
 
 
-%% Distribution of fibers
-if any(4<=plots & plots<5)
-    keyboard
-end;
-
-
-
-
-
 function f = plot_similarity_old(cdata, ndata, lbl)
 %
 % Compare RH and LH similarity for noise and no-noise conditions.
@@ -215,8 +206,6 @@ function f = plot_hu_sim(cdata, ndata, lbl)
         fprintf('no/noise RH-RH similarity (%s): %f\n', lbl, mean_dotted(cdata_rh(1:shared_count), ndata_rh(1:shared_count)));
 
         if isfield(cdata, 'rh_in_sim')
-            %keyboard
-
             cdata_rh_vs_input = cdata_rh - repmat(cdata.rh_in_sim, [size(cdata_rh, 1) 1]);
             cdata_lh_vs_input = cdata_lh - repmat(cdata.lh_in_sim, [size(cdata_lh, 1) 1]);
             ndata_rh_vs_input = ndata_rh - repmat(ndata.rh_in_sim, [size(ndata_rh, 1) 1]);
