@@ -51,11 +51,11 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     %% Analyze the networks and massage the results
     for ci=1:numel(nets)
         % Combine the results
-        [sims{ci}, simstats{ci}, niters{ci}, built_idx] = r_group_analyze(nets{ci}{1}.sets, datas{ci});
+        [sims{ci}, simstats{ci}, niters{ci}, idx] = r_group_analyze(nets{ci}{1}.sets, datas{ci});
 
         % Filter the results to only good results
-        nets{ci} = nets{ci}(built_idx);
-        datas{ci} = datas{ci}(built_idx);
+        nets{ci} = nets{ci}(idx.built);
+        datas{ci} = datas{ci}(idx.built);
 
         % Report some results
         r_plot_similarity(nets{ci}, sims{ci}, simstats{ci}, loop_figs);
@@ -88,17 +88,19 @@ function net = set_net_params(template_net, ncc, delay, T, mi)
     end;
 
 
-function [sims, simstats, niters, built_idx, trained_idx] = r_group_analyze(sets, datas)
-    built_idx     = cellfun(@(d) ~isfield(d, 'ex') && isfield(d, 'actcurve'), datas);
-    trained_idx  = cellfun(@(d) isfield(d, 'good_update') && (length(d.good_update) < sets.niters || nnz(~d.good_update) == 0), datas);
-    good_idx = built_idx & trained_idx;
+function [sims, simstats, idx] = r_group_analyze(sets, datas)
+% built: was built (?)
+% trained: finished training without errors.
+% good: built & trained.
 
-    anz          = cellfun(@(d) d.an, datas(good_idx), 'UniformOutput', false);
+    idx.built   = cellfun(@(d) ~isfield(d, 'ex') && isfield(d, 'actcurve'), datas);
+    idx.trained = cellfun(@(d) isfield(d, 'good_update') && (length(d.good_update) < sets.niters || nnz(~d.good_update) == 0), datas);
+    idx.good    = idx.built & idx.trained;
+
+    anz          = cellfun(@(d) d.an, datas(idx.good), 'UniformOutput', false);
     sims         = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
     simstats_tmp = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
     simstats     = mean(cat(5, simstats_tmp{:}), 5);
-
-    niters       = cellfun(@(d) guru_getfield(d, 'niters', NaN), datas(good_idx));
 
 
 function r_plot_niters(nets, sims, niters, nexamples)
