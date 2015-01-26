@@ -1,7 +1,7 @@
 function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexamples, ...
                                                              nccs, delays, Ts, ...
                                                              loop_figs, summary_figs, ...
-                                                             results_dir, figures_output_dir, figures_output_extensions)
+                                                             results_dir, output_types)
 %
 
     %% Initialize environment and directories.
@@ -11,16 +11,14 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     if ~exist('Ts', 'var'), Ts = unique(template_net.sets.T_INIT) / template_net.sets.dt; end;
     if ~exist('loop_figs', 'var'), loop_figs = []; end;
     if ~exist('summary_figs', 'var'), summary_figs = [0 1 2]; end;
-    if ~exist('results_dir', 'var'), results_dir = fullfile(guru_getOutPath('plot'), 'current'); end;
-    if ~exist('figures_output_extensions', 'var'), figures_output_extensions = {'png'}; end;
-    if ~exist('figures_output_dir', 'var'),
+    if ~exist('output_types', 'var'), output_types = {'png'}; end;
+    if ~exist('results_dir', 'var'),
         abc = dbstack;
         script_name = abc(end).name;
-        figures_output_dir = fullfile(results_dir, script_name);
+        results_dir = fullfile(guru_getOutPath('plot'), script_name);
     end;
 
     if ~exist(results_dir, 'dir'), mkdir(results_dir); end;
-    if ~exist(figures_output_dir, 'dir'), mkdir(figures_output_dir); end;
 
 
     %% Train in parallel, gather data sequentially
@@ -71,8 +69,8 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     r_plot_similarity_surfaces(nets, vals, simstats, summary_figs);
 
     guru_saveall_figures( ...
-        figures_output_dir, ...
-        figures_output_extensions, ...
+        results_dir, ...
+        output_types, ...
         false, ...  % don''t overwrite
         true);      % close figures after save
 
