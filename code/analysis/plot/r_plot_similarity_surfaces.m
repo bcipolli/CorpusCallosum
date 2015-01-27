@@ -112,7 +112,7 @@ function r_plot_similarity_surfaces_1D(nets, vals, simstats, dim_id, data_plotte
 
 
         if ismember(1, figs)
-            f1h = figure('name', 'f1h', 'Position', [ 0  0 500*ncols  600*nrows]);
+            f1h = figure('name', 'f1h', 'Position', [ 0  0 1000*ncols  600*nrows]);
             for rowi=1:nrows
                 for coli=1:ncols
                     ploti = coli + ncols*(rowi-1);

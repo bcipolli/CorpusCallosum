@@ -13,8 +13,8 @@ net.sets.phi_w = 0.5;
 net.sets.lambda_w = 1E-3;
 
 % Train over all combinations of ncc and delays
-ncc    = linspace(net.sets.nhidden_per, 0, 6);
-delays = [1 5 10 15 20];
+ncc    = [2 6 10]; %linspace(net.sets.nhidden_per, 0, 6);
+delays = [1 5 10];
 
-r_train_and_analyze_all(net, 10, ncc, delays);
+r_train_and_analyze_all(net, 2, ncc, delays);
 

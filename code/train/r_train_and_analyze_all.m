@@ -43,6 +43,27 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     for ni = 1:length(nccs), for di=1:length(delays), for ti=1:length(Ts)
         net = set_net_params(template_net, nccs(ni), delays(di), Ts(ti));
         [nets{ni, di, ti}, pats, datas{ni, di, ti}] = r_train_many(net, nexamples);
+
+        % Gather any missing data
+        for mi=1:nexamples
+            if false || ~isfield(datas{ni, di, ti}{mi}, 'an') || ~isfield(datas{ni, di, ti}{mi}.an, 'sim') || size(datas{ni, di, ti}{mi}.an.simstats, 4) ~= 9
+                net = nets{ni, di, ti}{mi};
+                data = datas{ni, di, ti}{mi};
+
+                guru_assert(isfield(data, 'actcurve'), 'actcurve not in data!');
+
+                % Will propagate data to cell array.
+                fprintf('Computing similarity...')
+                [data.an.sim, data.an.simstats] = r_compute_similarity(net, pats);
+                datas{ni, di, ti}{mi} = data;
+
+                % Hack to make things work A LOT FASTER
+                outfile = fullfile(net.sets.dirname, net.sets.matfile);
+                fprintf(' re-saving to %s ...', outfile);
+                save(outfile,'net','pats','data');
+                fprintf(' done.\n');
+            end;
+        end;
     end; end; end;
 
 
