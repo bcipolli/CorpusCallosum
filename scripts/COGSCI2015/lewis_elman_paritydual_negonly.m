@@ -21,4 +21,4 @@ ncc    = linspace(0, net.sets.nhidden_per, 6);
 ncc    = ncc(end:-1:1);
 delays = [1 5 10 15 20];
 
-r_train_and_analyze_all(net, 25, ncc, delays);
+r_train_and_analyze_all(net, 10, ncc, delays);
