@@ -8,9 +8,9 @@ function net = lewis_elman_common_args()
 
     tsteps = 35;
     Idel = 1;
-    Idur = 5;%tsteps-Idel;
-    Sdel = 0; %start measuring output right when it goes off
-    Sdur = 1;  %measure for 5 time-steps
+    Idur = 5; %tsteps-Idel;
+    Sdel = 15; %start measuring output right when it goes off
+    Sdur = 5;  %measure for 5 time-steps
 
     net.sets.rseed = 290;
 
@@ -58,7 +58,7 @@ function net = lewis_elman_common_args()
     net.sets.noise_init       = 0;%.001;%1;
     net.sets.noise_input      = 0;%1E-6;%.001;%001;%1;
 
-    net.sets.dirname          = fullfile(guru_getOutPath('cache'), 'asymmetry');
+    net.sets.dirname          = fullfile(guru_getOutPath('cache'));
     net.sets.test_freq        = 25; %10
 
     net.sets.continue         = false;

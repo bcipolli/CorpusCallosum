@@ -63,9 +63,10 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
                 datas{ni, di, ti}{mi} = data;
 
                 % Hack to make things work A LOT FASTER
-                outfile = fullfile(net.sets.dirname, net.sets.matfile);
+                cache_file = fullfile(net.sets.dirname, net.sets.matfile);
+                guru_assert(exist(cache_file, 'file'), 'We should be overwriting the cache file.');
                 fprintf(' re-saving to %s ...', outfile);
-                save(outfile,'net','pats','data');
+                save(cache_file,'net','pats','data');
                 fprintf(' done.\n');
             end;
         end;
