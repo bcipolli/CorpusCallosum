@@ -6,10 +6,10 @@ function net = lewis_elman_common_args()
     dbstop if error;
     %dbstop if warning;
 
-    tsteps = 35;
+    tsteps = 30;
     Idel = 1;
     Idur = 5; %tsteps-Idel;
-    Sdel = 15; %start measuring output right when it goes off
+    Sdel = 0; %start measuring output right when it goes off
     Sdur = 5;  %measure for 5 time-steps
 
     net.sets.rseed = 290;
