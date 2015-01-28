@@ -38,6 +38,7 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     datas = cell(size(nets));
     sims = cell(size(nets));
     simstats = cell(size(nets));
+    lagstats = cell(size(nets));
     niters = cell(size(nets));
 
     for ni = 1:length(nccs), for di=1:length(delays), for ti=1:length(Ts)
@@ -46,15 +47,19 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
 
         % Gather any missing data
         for mi=1:nexamples
-            if false || ~isfield(datas{ni, di, ti}{mi}, 'an') || ~isfield(datas{ni, di, ti}{mi}.an, 'sim') || size(datas{ni, di, ti}{mi}.an.simstats, 4) ~= 9
+            data = datas{ni, di, ti}{mi};
+
+            % skip exceptions.
+            if isfield(data, 'ex'), continue; end;
+
+            if ~isfield(data, 'an') || ~all(isfield(data.an, {'sim', 'simstats', 'lagstats'})) || size(data.an.simstats, 4) < 9
                 net = nets{ni, di, ti}{mi};
-                data = datas{ni, di, ti}{mi};
 
                 guru_assert(isfield(data, 'actcurve'), 'actcurve not in data!');
 
                 % Will propagate data to cell array.
                 fprintf('Computing similarity...')
-                [data.an.sim, data.an.simstats] = r_compute_similarity(net, pats);
+                [data.an.sim, data.an.simstats, data.an.lagstats] = r_compute_similarity(net, pats);
                 datas{ni, di, ti}{mi} = data;
 
                 % Hack to make things work A LOT FASTER
@@ -70,14 +75,14 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     %% Analyze the networks and massage the results
     for ci=1:numel(nets)
         % Combine the results
-        [sims{ci}, simstats{ci}, idx] = r_group_analyze(nets{ci}{1}.sets, datas{ci});
+        [sims{ci}, simstats{ci}, lagstats{ci}, idx] = r_group_analyze(nets{ci}{1}.sets, datas{ci});
 
         % Filter the results to only good results
         nets{ci} = nets{ci}(idx.built);
         datas{ci} = datas{ci}(idx.built);
 
         % Report some results
-        r_plot_similarity(nets{ci}, sims{ci}, simstats{ci}, loop_figs);
+        r_plot_similarity(nets{ci}, sims{ci}, simstats{ci}, lagstats{ci}, loop_figs);
     end;
 
     % compute
@@ -87,7 +92,7 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
     % Plot some summary figures
     r_plot_training_figures(nets, datas, vals, nexamples, summary_figs);
     r_plot_interhemispheric_surfaces(nets, datas, vals, summary_figs);
-    r_plot_similarity_surfaces(nets, vals, simstats, summary_figs);
+    r_plot_similarity_surfaces(nets, vals, simstats, lagstats, summary_figs);
 
     guru_saveall_figures( ...
         results_dir, ...
@@ -114,7 +119,7 @@ function net = set_net_params(template_net, ncc, delay, T, mi)
     end;
 
 
-function [sims, simstats, idx] = r_group_analyze(sets, datas)
+function [sims, simstats, lagstats, idx] = r_group_analyze(sets, datas)
 % built: was built (?)
 % trained: finished training without errors.
 % good: built & trained.
@@ -125,5 +130,10 @@ function [sims, simstats, idx] = r_group_analyze(sets, datas)
 
     anz          = cellfun(@(d) d.an, datas(idx.good), 'UniformOutput', false);
     sims         = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
+
     simstats_tmp = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
     simstats     = mean(cat(5, simstats_tmp{:}), 5);
+
+    lagstats_tmp = cellfun(@(an) an.lagstats.a, anz, 'UniformOutput', false);
+    lagstats     = mean(cat(3, lagstats_tmp{:}), 3);
+

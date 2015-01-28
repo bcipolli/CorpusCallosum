@@ -1,17 +1,17 @@
-function r_plot_similarity_surfaces(nets, vals, simstats, figs)
+function r_plot_similarity_surfaces(nets, vals, simstats, lagstats, figs)
 
     if ~iscell(nets), nets = { nets }; end;
     if ~exist('figs', 'var'), figs = [2]; end;
 
     switch vals.dims.nvaried
         case 0, warning('No valid networks were trained, so no plots can be made.'); return;
-        case 1, r_plot_similarity_surfaces_1D(nets, vals, simstats, [], 9, figs); % 5=mean, 9=corr
-        case 2, r_plot_similarity_surfaces_2D(nets, vals, simstats, 9, figs);
+        case 1, r_plot_similarity_surfaces_1D(nets, vals, simstats, lagstats, [], 9, figs); % 5=mean, 9=corr
+        case 2, r_plot_similarity_surfaces_2D(nets, vals, simstats, lagstats, 9, figs);
         otherwise, error('NYI');
     end;
 
 
-function r_plot_similarity_surfaces_2D(nets, vals, simstats, data_plotted, figs)
+function r_plot_similarity_surfaces_2D(nets, vals, simstats, lagstats, data_plotted, figs)
     if ~exist('data_plotted', 'var'), data_plotted = 5; end;
     if ~exist('figs', 'var'), figs = []; end;
 
@@ -36,6 +36,7 @@ function r_plot_similarity_surfaces_2D(nets, vals, simstats, data_plotted, figs)
                 nets(value_idx), ...
                 cur_vals, ...
                 simstats(value_idx), ...
+                lagstats(value_idx), ...
                 other_dim_id, ...
                 data_plotted, ...
                 figs)
@@ -53,7 +54,7 @@ function r_plot_similarity_surfaces_2D(nets, vals, simstats, data_plotted, figs)
     col_ids = {'cc', 'ih', 'hu'};
 
     % Surfaces for intra, inter, and full.., for all 3 timesteps.  So a 3x3 grid.
-    fh = figure('name', 'similarity_matrix', 'Position', [0, 0, 1800 1800]);
+    fh = figure('name', 'dissimilarity_matrix', 'Position', [0, 0, 1800 1800]);
 
     for ti=1:length(times)
         dim1_id = vals.dims.ids{1};
@@ -81,13 +82,13 @@ function r_plot_similarity_surfaces_2D(nets, vals, simstats, data_plotted, figs)
             surf(dim1_vals, dim2_vals, loc_data');
             xlabel(vals.dims.names{1});
             ylabel(vals.dims.names{2});
-            zlabel('similarity');
-            title(sprintf('%s similarity @ %d / %d steps', loc_name, times(ti), vals.tsteps));
+            zlabel('dissimilarity');
+            title(sprintf('%s dissimilarity @ %d / %d steps', loc_name, times(ti), vals.tsteps));
         end;
     end;
 
 
-function r_plot_similarity_surfaces_1D(nets, vals, simstats, dim_id, data_plotted, figs)
+function r_plot_similarity_surfaces_1D(nets, vals, simstats, lagstats, dim_id, data_plotted, figs)
 % When we vary on just one dimension, show as a surface plot vs. time
 
     if ~exist('data_plotted', 'var'), data_plotted = 5; end;
@@ -109,7 +110,7 @@ function r_plot_similarity_surfaces_1D(nets, vals, simstats, dim_id, data_plotte
     %% Figure 1: mean difference from output similarity
     for pti=1:vals.npattypes
         [data] = r_distill_data(simstats, dim_id, vals, pti, data_plotted);
-
+        lagdata = r_distill_data(simstats, dim_id, vals, pti, data_plotted);
 
         if ismember(1, figs)
             f1h = figure('name', 'f1h', 'Position', [ 0  0 1000*ncols  600*nrows]);
@@ -160,6 +161,10 @@ function r_plot_similarity_surfaces_1D(nets, vals, simstats, dim_id, data_plotte
                 end;
             end;
         end;
+
+        %if true || ismember(3, figs)
+        %    keyboard
+        %end;
     end;
 
     if exist('f1h', 'var'), set(f1h, 'Position', [ 0  0 500*ncols  600*nrows]), end;

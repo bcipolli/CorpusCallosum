@@ -1,4 +1,4 @@
-function r_plot_similarity(nets, sim, simstats, figs)
+function r_plot_similarity(nets, sim, simstats, lagstats, figs)
 
 
     if ~iscell(nets), nets = { nets }; end;
@@ -17,6 +17,17 @@ function r_plot_similarity(nets, sim, simstats, figs)
     title_addendum = sprintf('D=%d ncc=%d/%d output_ts=[%d %d]', max(nets{1}.sets.D_CC_LIM(:)), nets{1}.sets.ncc, nets{1}.sets.nhidden_per, round(nets{1}.sets.S_LIM/nets{1}.sets.dt));
     labels = cellfun(@(str) (strrep(str(4:end),  '_', '\_')), sim.hemi_locs(1:end/2), 'UniformOutput', false);
 
+    if true || ismember(4, figs)
+        f4h = figure('name', 'xcorr', 'Position', [ 72         -21        1209         794]);
+        lag_mean = mean(lagstats, 1);
+        lag_stde = std(lagstats, [], 1) / sqrt(size(lagstats, 1));
+        ntimes = size(lag_stde, 2);
+        lag_times = [1:ntimes] - (ntimes + 1) / 2;
+        errorbar(lag_times, lag_mean, lag_stde);
+        xlabel('time lag');
+        ylabel('cross correlation');
+        title('interhemispheric cross correlation');
+    end;
 
     %% Figure 1: mean difference from output similarity
     if ismember(1, figs)

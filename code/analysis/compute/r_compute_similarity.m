@@ -1,10 +1,10 @@
-function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
+function [sim, simstats, lagstats] = r_compute_similarity(net, pats, sim_measure, timelag)
 %
 %Input:
 %   net - network object
 %   pats - pattern object
 %   sim_measure - parameter to pdist; default 'correlation'
-%
+%   timelag - shift of rh_curve relative to lh
 %
 %Output:
 % Sim:
@@ -19,6 +19,7 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
     warning('off', 'stats:pdist:constantPoints');
 
     if ~exist('sim_measure', 'var'), sim_measure = 'correlation'; end;
+    if ~exist('timelag', 'var'), timelag = 0; end;
 
     if iscell(net)
         % Received multiple networks; loop over them and average.
@@ -81,10 +82,10 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
     end;
 
     % Now compare across the hemispheres
-    simstats = zeros(tsteps, nlocs/2, npattypes+1, 5); % diff_mean, diff_std, asymm_mean, asymm_std
+    simstats = zeros(tsteps, nlocs/2, npattypes, 9); % diff_mean, diff_std, asymm_mean, asymm_std
     for ti=1:tsteps
         for li=2:nlocs / 2  % #1 is input... cheating :)
-            for pti=1:npattypes  % inter, intra
+            for pti=1:npattypes  % all, inter, intra
                 loc = sim.hemi_locs{li}(4:end);
                 rh_idx = strcmp(sim.hemi_locs, ['rh_' loc]);
                 lh_idx = strcmp(sim.hemi_locs, ['lh_' loc]);
@@ -118,6 +119,7 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
                     %fprintf('\n%2d: %s corr & avg differ %.2f vs %.2f\n', ti, loc, (1-patsim_asymmetry_corr), mean(abs(patsim_asymmetry)));
                 end;
 
+                % Filter only the patterns we wish to include in the similarity computation
                 switch pat_types{pti}
                     case 'all', idx = 1:npats;
                     otherwise,  idx = pats.idx.(pat_types{pti});
@@ -156,3 +158,32 @@ function [sim, simstats] = r_compute_similarity(net, pats, sim_measure)
             end;
         end;
     end;
+
+
+    % Now do a cross-correlation between rh and lh similarities.
+    for li=2:nlocs / 2  % #1 is input... cheating :)
+        loc = sim.hemi_locs{li}(4:end);
+        rh_idx = strcmp(sim.hemi_locs, ['rh_' loc]);
+        lh_idx = strcmp(sim.hemi_locs, ['lh_' loc]);
+
+        rh_sim = squeeze(patsims(:, rh_idx, :));
+        lh_sim = squeeze(patsims(:, lh_idx, :));
+
+        rh_sim(isnan(rh_sim)) = 0;
+        lh_sim(isnan(lh_sim)) = 0;
+
+        ncompares = size(rh_sim, 2);
+        a = zeros(ncompares, tsteps * 2 - 1);
+        for ci=1:ncompares
+            [a(ci,:), b] = xcorr(rh_sim(:,ci), lh_sim(:,ci));
+        end;
+
+        fig_name = sprintf('delay=%d', max(net.sets.D_LIM(:)));
+        figure('name', fig_name);
+        plot(b, mean(a,1));
+        xlabel('lag (timesteps)');
+        ylabel('xcorr');
+        title(fig_name);
+        print(gcf, sprintf('xcorr-%s.png', fig_name), '-dpng');
+    end;
+    lagstats = struct('a', a, 'b', b);
