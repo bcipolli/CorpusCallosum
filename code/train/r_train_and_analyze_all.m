@@ -20,60 +20,28 @@ function [nets, pats, datas, figs] = r_train_and_analyze_all(template_net, nexam
 
     if ~exist(results_dir, 'dir'), mkdir(results_dir); end;
 
+    % Collect the data
+    nets = cell(length(nccs), length(delays), length(Ts));
+    datas = cell(size(nets));
 
     %% Train in parallel, gather data sequentially
     parfor mi=1:nexamples, for ni = 1:length(nccs), for di=1:length(delays), for ti=1:length(Ts)
         % Train the network
         net = set_net_params(template_net, nccs(ni), delays(di), Ts(ti), mi);
-        r_train_many(net, 1);
-
-        %% Gather any missing data
-        %if ~isfield(data, 'an') || ~isfield(data.an, 'sim') || size(data.an.simstats, 4) ~= 9
-        %    [net, data] = r_mark_missing_data(net, pats, data);
-        %end;
+        r_train_and_analyze_many(net, 1);
     end; end; end; end;
-
-    % Collect the data
-    nets = cell(length(nccs), length(delays), length(Ts));
-    datas = cell(size(nets));
-    sims = cell(size(nets));
-    simstats = cell(size(nets));
-    lagstats = cell(size(nets));
-    niters = cell(size(nets));
 
     for ni = 1:length(nccs), for di=1:length(delays), for ti=1:length(Ts)
         net = set_net_params(template_net, nccs(ni), delays(di), Ts(ti));
-        [nets{ni, di, ti}, pats, datas{ni, di, ti}] = r_train_many(net, nexamples);
-
-        % Gather any missing data
-        for mi=1:nexamples
-            data = datas{ni, di, ti}{mi};
-
-            % skip exceptions.
-            if isfield(data, 'ex'), continue; end;
-
-            if ~isfield(data, 'an') || ~all(isfield(data.an, {'sim', 'simstats', 'lagstats'})) || size(data.an.simstats, 4) < 9
-                net = nets{ni, di, ti}{mi};
-
-                guru_assert(isfield(data, 'actcurve'), 'actcurve not in data!');
-
-                % Will propagate data to cell array.
-                fprintf('Computing similarity...')
-                [data.an.sim, data.an.simstats, data.an.lagstats] = r_compute_similarity(net, pats);
-                datas{ni, di, ti}{mi} = data;
-
-                % Hack to make things work A LOT FASTER
-                cache_file = fullfile(net.sets.dirname, net.sets.matfile);
-                guru_assert(exist(cache_file, 'file'), 'We should be overwriting the cache file.');
-                fprintf(' re-saving to %s ...', outfile);
-                save(cache_file,'net','pats','data');
-                fprintf(' done.\n');
-            end;
-        end;
+        [nets{ni, di, ti}, pats, datas{ni, di, ti}] = r_train_and_analyze_many(net, nexamples);
     end; end; end;
 
 
     %% Analyze the networks and massage the results
+    sims = cell(size(nets));
+    simstats = cell(size(nets));
+    lagstats = cell(size(nets));
+
     for ci=1:numel(nets)
         % Combine the results
         [sims{ci}, simstats{ci}, lagstats{ci}, idx] = r_group_analyze(nets{ci}{1}.sets, datas{ci});
@@ -129,12 +97,10 @@ function [sims, simstats, lagstats, idx] = r_group_analyze(sets, datas)
     idx.trained = cellfun(@(d) isfield(d, 'good_update') && (length(d.good_update) < sets.niters || nnz(~d.good_update) == 0), datas);
     idx.good    = idx.built & idx.trained;
 
-    anz          = cellfun(@(d) d.an, datas(idx.good), 'UniformOutput', false);
-    sims         = cellfun(@(an) an.sim, anz, 'UniformOutput', false);
+    sims          = cellfun(@(d) d.sims,     datas(idx.good), 'UniformOutput', false);
 
-    simstats_tmp = cellfun(@(an) an.simstats, anz, 'UniformOutput', false);
+    simstats_tmp  = cellfun(@(d) d.simstats, datas(idx.good), 'UniformOutput', false);
     simstats     = mean(cat(5, simstats_tmp{:}), 5);
 
-    lagstats_tmp = cellfun(@(an) an.lagstats.a, anz, 'UniformOutput', false);
+    lagstats_tmp  = cellfun(@(d) d.lagstats.a, datas(idx.good), 'UniformOutput', false);
     lagstats     = mean(cat(3, lagstats_tmp{:}), 3);
-
