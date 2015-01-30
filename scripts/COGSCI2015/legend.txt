@@ -1,0 +1,29 @@
+Figuring out training:
+* Train for 35 ts, only check the last activation
+* Train for 30 ts, train on the last 5 timesteps, check on ... which?
+* Train for 50 ts, train on the last 5 timesteps, check on ... which?
+
+
+Varying task (no constraint):
+* paritypaired
+* parity_shift_paired
+* parity_shift_indep
+* parity_dual_noise
+
+
+Analyses:
+* For all, subtract out value @ ncc=0.  Combine data across all 'delays'.  Make sure to collapse these into the same hash value in the future... to save time.
+
+
+Tasks:
++ parity, shift: both hemispheres do it, once per input, paired non-randomly (matching)
++ *_dual: both hemispheres do it, but they require collaboration.
++ parity_vs_shift: both get the same input patterns, but produce outputs from a different task (independently).
++ parity_shift: ? perhaps learning half of parity, half of shift?  no idea.
++ parity_or_shift: each learns parity and shift, while the other is doing either parity or shift (some mixup, not total predictability)
++ parity_and_shift: ?
+
+New tasks:
++ parity_vs_shift_dual: both get the same input patterns, produce different task outputs, but use the inputs from each side.
++ parity_or_shift_dual
++
