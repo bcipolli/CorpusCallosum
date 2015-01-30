@@ -42,13 +42,20 @@ function [net, pats, data] = r_train_and_analyze_one(sets, rseed, save_data)
         fprintf('Loading cached file %s...', matfile);
         load(matfile);
         fprintf(' done.\n');
+        
+        % Validate what we loaded
         guru_assert(exist('net',  'var'), 'net should be in matfile.');
         guru_assert(exist('pats', 'var'), 'pats should be in matfile.');
         guru_assert(exist('data', 'var'), 'pats should be in matfile.');
+        if isfield(data, 'ex') && ~isempty(findstr('time to debug', guru_getfield(data.ex, 'message', [])))
+            clear('data');
+            fprintf('** RERUNNING inadvertently error-cached scenario.\n');
+        end;
         % Fall through, to append any extra analyses
+    end;
 
     % train / analyze
-    else
+    if ~exist('data', 'var')
         changed = true;
 
         try
@@ -61,7 +68,7 @@ function [net, pats, data] = r_train_and_analyze_one(sets, rseed, save_data)
         end;
     end;
 
-    if ~isfield('data', 'ex')
+    if ~isfield(data, 'ex')
         % Analysis
         if ~isfield(data, 'an'),
             [data.an] = r_analyze_training(net, pats, data);
