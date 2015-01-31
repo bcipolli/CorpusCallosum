@@ -8,7 +8,7 @@ dbstop if error;
 
 Idel = 1;
 Idur = 6;%tsteps-Idel;
-Sdel = 0; %start measuring output right when it goes off 
+Sdel = 0; %start measuring output right when it goes off
 Sdur = 1;  %measure for 5 time-steps
 
 
@@ -18,14 +18,14 @@ net.sets.online          = false;
 net.sets.ncc             = 3;
 net.sets.cc_wt_lim       = inf*[-1 1];
 net.sets.W_LIM           = inf*[-1 1];
-net.sets.train_criterion = 0.5; 
+net.sets.train_criterion = 0.5;
 net.sets.dataset         = 'lewis_elman';
 net.sets.init_type       = 'lewis_elman';
 net.sets.train_mode      = 'resilient';
 
 %timing parameters
 net.sets.dt     = 0.01;
-net.sets.T_INIT = 5*net.sets.dt.*[1 1];  %change     
+net.sets.T_INIT = 5*net.sets.dt.*[1 1];  %change
 net.sets.T_LIM  = net.sets.T_INIT;
 
 net.sets.D_INIT           = 1*[1 1];%*[1 1; 1 1]; %early lh&rh; late lh&rh
@@ -34,7 +34,7 @@ net.sets.D_IH_INIT(2,:,:) = net.sets.D_IH_INIT(1,:,:); %rh;    early->late and l
 
 net.sets.eta_w           = 1E-3;    %learning rate (initial)
 net.sets.eta_w_min       = 0;
-net.sets.lambda_w        = 2E-2;    % lambda*E to control kappa. 
+net.sets.lambda_w        = 2E-2;    % lambda*E to control kappa.
 net.sets.phi_w           = 0.25;      % multiplicative decrease to eta
 net.sets.alpha_w         = 0.25;       %momentum
 
@@ -51,8 +51,14 @@ net.sets.noise_input      = 1E-6;%.001;%001;%1;
 
 sets= net.sets;
 
-
-chunk_size = guru_iff(exist('matlabpool','file'), matlabpool('size'), 1);
+if ~exist('matlabpool', 'file')
+   chunk_size = 1;
+else
+    if matlabpool('size') == 0
+        matlabpool open 4;
+    end;
+    chunk_size = matlabpool('size');
+end;
 
 for rseed=(289-1+[1:chunk_size:25])
   for tsteps=[15:5:50 75]
@@ -64,22 +70,22 @@ for rseed=(289-1+[1:chunk_size:25])
           % Make sure not to reuse networks!
           clear 'net';
           net.sets = sets;
-        
+
           net.sets.tstart = 0;
           net.sets.tsteps = tsteps  ;%we''ll add another hidden layer, so measure output at one step later
           net.sets.tstop  = net.sets.tsteps * net.sets.dt;
           net.sets.I_LIM  = net.sets.tstart+net.sets.dt*(Idel +[0 Idur]); %in terms of time, not steps
           net.sets.S_LIM  = net.sets.tstop -net.sets.dt*(Sdel +[Sdur 0]);  % min & max time to consider error
-    
+
           net.sets.D_CC_INIT(1,:,:) = delay*[1 1; 1 1];             %early; l->r and r->l
           net.sets.D_CC_INIT(2,:,:) = net.sets.D_CC_INIT(1,:,:); %late;  l->r and r->l
 
           net.sets.axon_noise       = noise;%1E-5;%0.0005; % constant level of noise
-          
+
           net.sets.rseed = rseed;
           net.sets.dirname = dirname;
-          
-          r_train_many(net, chunk_size);
+
+          r_train_and_analyze_many(net, chunk_size);
       end;
     end;
   end;
@@ -88,6 +94,6 @@ end;
   cache_dir         = guru_fileparts(fileparts(net.sets.dirname), 'name');
   cache_file        = fullfile(cache_dir, [mfilename '.mat']);
   [~,~,folders] = collect_data_looped( cache_dir );
-  
+
   make_cache_file(folders, cache_file);
 
