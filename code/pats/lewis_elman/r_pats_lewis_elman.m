@@ -123,6 +123,11 @@ function [in_pats, out_pats, pat_cls, pat_lbls, idx] = r_pats_lewis_elman(sets, 
     in_pats  = -1+2*pats(:,[idx.lh.in  idx.rh.in]);
     out_pats = -1+2*pats(:,[idx.lh.out idx.rh.out]);
 
+    % Reorder the indices to reflect this new structure.
+    idx.lh = struct('in', 1:5, 'out', 1:5);
+    idx.rh = struct('in', idx.lh.in + idx.lh.in(end), ...
+                    'out', idx.lh.out + idx.lh.out(end));
+
     % Label patterns
     pat_lbls            = cell(size(pats,1),1);
     pat_lbls(idx.inter) = {'inter'};
