@@ -69,14 +69,23 @@ function [net, pats, data] = r_train_and_analyze_one(sets, rseed, save_data)
     end;
 
     if ~isfield(data, 'ex')
-        % Analysis
-        if ~isfield(data, 'an'),
+        if ~isfield(data, 'an')  % Always analyze training 
             [data.an] = r_analyze_training(net, pats, data);
             changed = true;
         end;
-        if any(~isfield(data, {'sims', 'simstats', 'lagstats'}))
+        if any(~isfield(data, {'sims', 'simstats', 'lagstats'})) % Always analyze similarities
             [data.sims, data.simstats, data.lagstats] = r_analyze_similarity(net, pats, data);
             changed = true;
+        end;
+        if changed && isfield(net.fn, 'analyze')
+            try
+                data = net.fn.analyze(net, pats, data);
+            catch ex
+                keyboard
+                if ~strcmp(ex.identifier, 'MATLAB:UndefinedFunction')
+                    throw(ex);
+                end;
+            end;
         end;
     end;
 

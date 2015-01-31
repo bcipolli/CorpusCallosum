@@ -26,22 +26,10 @@ function [an] = r_analyze_training(net, pats, data)
 
     % Analyze each struture, then report
     if (isfield(data,'lesion'))
-
         % Generic analyses
         [an.l]  = r_analyze_training(net, pats.(data.lesion.pats), data.lesion);
         [an.nl] = r_analyze_training(net, pats.(data.nolesion.pats), data.nolesion);
 
         % Generic reports
         %data.lesion.avgerr - data.nolesion.avgerr         % Hemispheric diff in activation
-
-        % Sub-analysis
-        if isfield(net.fn, 'analyze')
-            try
-                net.fn.analyze(net, pats, data);
-            catch ex
-                if ~strcmp(ex.identifier, 'MATLAB:UndefinedFunction')
-                    throw(ex);
-                end;
-            end;
-        end;
     end;
