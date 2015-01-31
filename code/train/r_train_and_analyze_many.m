@@ -29,15 +29,13 @@ function [net, pats, data] = r_train_and_analyze_one(sets, rseed, save_data)
     changed = false;
 
 
-   % Make sure not to reuse networks!
-   net.sets = sets;
-   net.sets.rseed = rseed;
-
-    %
+    %% Make sure not to reuse networks!
+    net.sets = sets;
+    net.sets.rseed = rseed;
     net = r_massage_params(net);
     matfile = fullfile(net.sets.dirname, net.sets.matfile);
 
-    % load from cache
+    %% Load from cache
     if exist(matfile, 'file')
         fprintf('Loading cached file %s...', matfile);
         load(matfile);
@@ -54,7 +52,7 @@ function [net, pats, data] = r_train_and_analyze_one(sets, rseed, save_data)
         % Fall through, to append any extra analyses
     end;
 
-    % train / analyze
+    %% Train, if needed
     if ~exist('data', 'var')
         changed = true;
 
@@ -68,6 +66,7 @@ function [net, pats, data] = r_train_and_analyze_one(sets, rseed, save_data)
         end;
     end;
 
+    %% Analyze, if possible / needed
     if ~isfield(data, 'ex')
         if ~isfield(data, 'an')  % Always analyze training 
             [data.an] = r_analyze_training(net, pats, data);
@@ -89,7 +88,7 @@ function [net, pats, data] = r_train_and_analyze_one(sets, rseed, save_data)
         end;
     end;
 
-    % Save result
+    %% Save the result
     if save_data && changed
         if ~exist(net.sets.dirname), mkdir(net.sets.dirname); end;
         cache_file = fullfile(net.sets.dirname, net.sets.matfile);

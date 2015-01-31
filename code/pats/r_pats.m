@@ -1,5 +1,38 @@
 function [pats] = r_pats(net)
 %
+% pats have the following properties:
+%    train: pat object
+%        P: int
+%           Input activations (time x pattern_index x input_node; input 1 is bias)
+%
+%        d: int
+%           Expected outputs (time x pattern_idx x output_node)
+%
+%        s: binary mask
+%           Times to examine outputs (time x pattern_idx x output_node)
+%
+%        gb:
+%        gb_lh: 
+%        gb_rh:
+% 
+%    test: pat object
+%
+%    idx: lh.in, lh.out, rh.in, rh.out
+%        indices into P/d/s (3rd dimension)
+%
+%    cls: cell array of ints 
+%        an int label for each pattern (for training)
+%
+%    lbls: cell array of string
+%        a text label for each pattern (for display)
+%
+%    ninput: int
+%
+%    noutput: int
+%
+%    name: string
+%        name of the pattern set (for display)
+
     pats.name         = net.sets.dataset;
 
     %%%%%%%%%%%%%%%%%%

@@ -14,7 +14,6 @@ function sim = representational_similarity_matrix(y, net, pats, locs, ptype)
 %   [loc].patsim : for each timestep, similarity matrix across patterns.
 %
 
-
     if ~exist('locs', 'var') || isempty(locs)
         switch net.sets.init_type
             case 'ringo', locs = {'input', 'early_hu', 'late_hu', 'output'};
@@ -23,12 +22,11 @@ function sim = representational_similarity_matrix(y, net, pats, locs, ptype)
     end;
     if ~exist('ptype', 'var'), ptype = 'correlation'; end;
 
-
-    % Similarity to inputs
-    rh_in =  squeeze(pats.train.P(2,:,pats.idx.rh.in)); % avoid the bias term
+    % Similarity to inputs; only works if they're all the same.
+    rh_in =  squeeze(pats.train.P(2,:,pats.idx.rh.in)); % use the second timepoint
     lh_in =  squeeze(pats.train.P(2,:,pats.idx.lh.in));
-    rh_out =  squeeze(pats.train.d(1,:,pats.idx.rh.out));
-    lh_out =  squeeze(pats.train.d(1,:,pats.idx.lh.out));
+    rh_out =  squeeze(pats.train.d(1,:,pats.idx.rh.out)); % ignoring 's', which marks
+    lh_out =  squeeze(pats.train.d(1,:,pats.idx.lh.out)); % valid output times, and just use the pattern from D
 
     % Input similarity
     sim.rh_in = pdist(rh_in, ptype);
